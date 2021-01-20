@@ -2,7 +2,7 @@
 using System;
 using System.Threading.Tasks;
 
-namespace ApplicationCore.Implements
+namespace ApplicationCore.Interfaces.Implements
 {
     public class UnitOfWork : IUnitOfWork
     {

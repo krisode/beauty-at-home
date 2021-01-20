@@ -1,6 +1,4 @@
-﻿using ApplicationCore.Interfaces;
-
-namespace ApplicationCore.Implements
+﻿namespace ApplicationCore.Interfaces.Implements
 {
     public class DatabaseFactory : Disposable, IDatabaseFactory
     {
