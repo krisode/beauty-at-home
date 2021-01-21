@@ -1,6 +1,12 @@
+using ApplicationCore.Services;
+using Infrastructure.Contexts;
+using Infrastructure.Interfaces;
+using Infrastructure.Interfaces.Implements;
+using Infrastructure.Repositories;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -25,6 +31,15 @@ namespace BeautyAtHome
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddDbContext<BeautyServiceProviderContext>(options =>
+            options.UseSqlServer(Configuration.GetConnectionString("BeautyServiceProviderDatabase")));
+
+            services.AddScoped<IDatabaseFactory, DatabaseFactory>();
+            services.AddTransient<IUnitOfWork, UnitOfWork>();
+
+            services.AddTransient<IServiceRepository, ServiceRepository>();
+            services.AddTransient<IBeautyServicesService, BeautyServicesService>();
+
             services
             .AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             .AddJwtBearer(options =>
