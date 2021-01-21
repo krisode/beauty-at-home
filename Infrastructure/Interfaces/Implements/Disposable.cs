@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace ApplicationCore.Interfaces.Implements
+namespace Infrastructure.Interfaces.Implements
 {
     public class Disposable : IDisposable
     {
