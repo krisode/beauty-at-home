@@ -28,9 +28,9 @@ namespace ApplicationCore.Services
             _iRepository.Add(service);
         }
 
-        public Service GetById(int Id)
+        public Service GetById(long id)
         {
-            return _iRepository.GetById(Id);
+            return _iRepository.GetById(id);
         }
 
         public void Update(Service entity)
@@ -43,29 +43,29 @@ namespace ApplicationCore.Services
             _iRepository.Delete(where);
         }
 
-        public IEnumerable<Service> GetAll()
+        public IEnumerable<Service> GetEnumAll()
         {
-            return _iRepository.GetAll();
+            return _iRepository.GetEnumAll();
         }
 
-        public IEnumerable<Service> GetAll(params Expression<Func<Service, object>>[] includes)
+        public IEnumerable<Service> GetEnumAll(params Expression<Func<Service, object>>[] includes)
         {
-            return _iRepository.GetAll(includes);
+            return _iRepository.GetEnumAll(includes);
         }
 
-        public IEnumerable<Service> GetList(Expression<Func<Service, bool>> where)
+        public IEnumerable<Service> GetEnumList(Expression<Func<Service, bool>> where)
         {
-            return _iRepository.GetList(where);
+            return _iRepository.GetEnumList(where);
         }
 
-        public IQueryable<Service> _GetList(Expression<Func<Service, bool>> where)
+        public IQueryable<Service> GetQueryList(Expression<Func<Service, bool>> where)
         {
-            return _iRepository._GetList(where);
+            return _iRepository.GetQueryList(where);
         }
 
-        public IQueryable<Service> _GetList(Expression<Func<Service, bool>> where, params Expression<Func<Service, object>>[] includes)
+        public IQueryable<Service> GetQueryList(Expression<Func<Service, bool>> where, params Expression<Func<Service, object>>[] includes)
         {
-            return _iRepository._GetList(where, includes);
+            return _iRepository.GetQueryList(where, includes);
         }
 
         public async Task<bool> Save()

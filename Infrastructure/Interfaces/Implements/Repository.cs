@@ -36,7 +36,7 @@ namespace Infrastructure.Interfaces.Implements
             return _dbSet.Find(where);
         }
 
-        public virtual T GetById(int id)
+        public virtual T GetById(long id)
         {
             return _dbSet.Find(id);
         }
@@ -62,12 +62,12 @@ namespace Infrastructure.Interfaces.Implements
             _dbSet.RemoveRange(lstRemove);
         }
 
-        public virtual IEnumerable<T> GetAll()
+        public virtual IEnumerable<T> GetEnumAll()
         {
             return _dbSet.ToList();
         }
 
-        public virtual IEnumerable<T> GetAll(params Expression<Func<T, object>>[] includes)
+        public virtual IEnumerable<T> GetEnumAll(params Expression<Func<T, object>>[] includes)
         {
             IQueryable<T> lstGet = _dbSet;
             foreach (var expression in includes)
@@ -78,19 +78,19 @@ namespace Infrastructure.Interfaces.Implements
             return lstGet;
         } 
 
-        public virtual IEnumerable<T> GetList(Expression<Func<T, bool>> where)
+        public virtual IEnumerable<T> GetEnumList(Expression<Func<T, bool>> where)
         {
             var lstGet = _dbSet.Where(where);
             return lstGet.ToList();
         }
 
-        public virtual IQueryable<T> _GetList(Expression<Func<T, bool>> where)
+        public virtual IQueryable<T> GetQueryList(Expression<Func<T, bool>> where)
         {
             var lstGet = _dbSet.Where(where);
             return lstGet;
         }
 
-        public virtual IQueryable<T> _GetList(Expression<Func<T, bool>> where, params Expression<Func<T, object>>[] includes)
+        public virtual IQueryable<T> GetQueryList(Expression<Func<T, bool>> where, params Expression<Func<T, object>>[] includes)
         {
             IQueryable<T> lstGet = _dbSet.Where(where);
             foreach (var expression in includes)
