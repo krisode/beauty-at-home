@@ -25,7 +25,7 @@ namespace Infrastructure.Interfaces.Implements
 
         public async Task<bool> Save()
         {
-            return await _context.Commit();
+            return await BeautyServiceProviderContext.Commit();
         }
     }
 }
