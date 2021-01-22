@@ -12,7 +12,8 @@ namespace Infrastructure.Repositories
     {
         public ServiceRepository(IDatabaseFactory databaseFactory) : base(databaseFactory)
         {
-
+            // test
+            // test 2
         }
     }
 }
