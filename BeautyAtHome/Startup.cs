@@ -1,4 +1,6 @@
 using ApplicationCore.Services;
+using FirebaseAdmin;
+using Google.Apis.Auth.OAuth2;
 using Infrastructure.Contexts;
 using Infrastructure.Interfaces;
 using Infrastructure.Interfaces.Implements;
@@ -31,6 +33,13 @@ namespace BeautyAtHome
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+
+            var pathToKey = Path.Combine(Directory.GetCurrentDirectory(), "Keys", "firebase_admin_sdk.json");
+            FirebaseApp.Create(new AppOptions
+            {
+                Credential = GoogleCredential.FromFile(pathToKey)
+            });
+
             services.AddDbContext<BeautyServiceProviderContext>(options =>
             options.UseSqlServer(Configuration.GetConnectionString("BeautyServiceProviderDatabase")));
 
@@ -39,6 +48,9 @@ namespace BeautyAtHome
 
             services.AddTransient<IServiceRepository, ServiceRepository>();
             services.AddTransient<IBeautyServicesService, BeautyServicesService>();
+
+            services.AddTransient<IAccountRepository, AccountRepository>();
+            services.AddTransient<IAccountService, AccountService>();
 
             services
             .AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
