@@ -7,5 +7,10 @@ namespace BeautyAtHome.Utils
 {
     public class Constants
     {
+        public static readonly int PAGE_SIZE = 50;
+
+        public static readonly int MAXIMUM_PAGE_SIZE = 250;
+
+
     }
 }
