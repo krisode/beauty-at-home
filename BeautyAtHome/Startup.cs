@@ -1,5 +1,7 @@
 using ApplicationCore.Services;
 using AutoMapper;
+using FirebaseAdmin;
+using Google.Apis.Auth.OAuth2;
 using Infrastructure.Contexts;
 using Infrastructure.Interfaces;
 using Infrastructure.Interfaces.Implements;
@@ -34,6 +36,12 @@ namespace BeautyAtHome
         {
             services.AddAutoMapper(typeof(Startup));
 
+            var pathToKey = Path.Combine(Directory.GetCurrentDirectory(), "Keys", "firebase_admin_sdk.json");
+            FirebaseApp.Create(new AppOptions
+            {
+                Credential = GoogleCredential.FromFile(pathToKey)
+            });
+
             services.AddDbContext<BeautyServiceProviderContext>(options =>
             options.UseSqlServer(Configuration.GetConnectionString("BeautyServiceProviderDatabase")));
 
@@ -42,6 +50,9 @@ namespace BeautyAtHome
 
             services.AddTransient<IServiceRepository, ServiceRepository>();
             services.AddTransient<IBeautyServicesService, BeautyServicesService>();
+
+            services.AddTransient<IAccountRepository, AccountRepository>();
+            services.AddTransient<IAccountService, AccountService>();
 
             services
             .AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
