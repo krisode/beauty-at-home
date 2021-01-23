@@ -1,4 +1,5 @@
 using ApplicationCore.Services;
+using AutoMapper;
 using FirebaseAdmin;
 using Google.Apis.Auth.OAuth2;
 using Infrastructure.Contexts;
@@ -33,6 +34,7 @@ namespace BeautyAtHome
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddAutoMapper(typeof(Startup));
 
             var pathToKey = Path.Combine(Directory.GetCurrentDirectory(), "Keys", "firebase_admin_sdk.json");
             FirebaseApp.Create(new AppOptions
