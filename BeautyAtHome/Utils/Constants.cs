@@ -27,5 +27,9 @@ namespace BeautyAtHome.Utils
             public const string ROLE = "role";
         }
 
+        public static class AccountStatus
+        {
+            public const string ACTIVE = "ACTIVE";
+        }
     }
 }

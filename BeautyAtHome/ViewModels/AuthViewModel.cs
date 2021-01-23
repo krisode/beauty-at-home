@@ -15,11 +15,9 @@ namespace BeautyAtHome.ViewModels
 
     public class AuthVM
     {
+        public int Id { get; set; }
         public string AccessToken { get; set; }
         public string DisplayName { get; set; }
-        public string Email { get; set; }
-        public string Phone { get; set; }
-        public ICollection<Address> Addresses{ get; set; }
     }
 
 

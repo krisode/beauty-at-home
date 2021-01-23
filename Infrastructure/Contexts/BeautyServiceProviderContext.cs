@@ -1,5 +1,7 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using System;
 using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata;
 
 #nullable disable
 
@@ -17,6 +19,7 @@ namespace Infrastructure.Contexts
         }
 
         public virtual DbSet<Account> Accounts { get; set; }
+        public virtual DbSet<AccountInSalon> AccountInSalons { get; set; }
         public virtual DbSet<Address> Addresses { get; set; }
         public virtual DbSet<Booking> Bookings { get; set; }
         public virtual DbSet<BookingActivity> BookingActivities { get; set; }
@@ -24,7 +27,6 @@ namespace Infrastructure.Contexts
         public virtual DbSet<FeedBack> FeedBacks { get; set; }
         public virtual DbSet<Gallery> Galleries { get; set; }
         public virtual DbSet<Image> Images { get; set; }
-        public virtual DbSet<Salon> Salons { get; set; }
         public virtual DbSet<Service> Services { get; set; }
         public virtual DbSet<ServiceInCombo> ServiceInCombos { get; set; }
         public virtual DbSet<ServiceType> ServiceTypes { get; set; }
@@ -34,7 +36,6 @@ namespace Infrastructure.Contexts
             int result = await base.SaveChangesAsync();
             return result > 0;
         }
-
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             if (!optionsBuilder.IsConfigured)
@@ -54,19 +55,15 @@ namespace Infrastructure.Contexts
                 entity.HasIndex(e => e.Email, "UQ__Account__A9D10534A113C252")
                     .IsUnique();
 
-                entity.Property(e => e.Id).ValueGeneratedNever();
-
-                entity.Property(e => e.Email)
-                    .IsRequired()
-                    .HasMaxLength(255)
-                    .IsUnicode(false);
-
-                entity.Property(e => e.Name)
+                entity.Property(e => e.DisplayName)
                     .IsRequired()
                     .HasMaxLength(300);
 
+                entity.Property(e => e.Email)
+                    .HasMaxLength(255)
+                    .IsUnicode(false);
+
                 entity.Property(e => e.Phone)
-                    .IsRequired()
                     .HasMaxLength(15)
                     .IsUnicode(false);
 
@@ -80,23 +77,39 @@ namespace Infrastructure.Contexts
                     .HasMaxLength(30)
                     .IsUnicode(false);
 
+                entity.HasOne(d => d.DefaultAddress)
+                    .WithMany(p => p.Accounts)
+                    .HasForeignKey(d => d.DefaultAddressId)
+                    .HasConstraintName("FK_Account_Address");
+
                 entity.HasOne(d => d.Gallery)
                     .WithMany(p => p.Accounts)
                     .HasForeignKey(d => d.GalleryId)
                     .HasConstraintName("FK_Account_Gallery");
+            });
 
-                entity.HasOne(d => d.Salon)
-                    .WithMany(p => p.Accounts)
-                    .HasForeignKey(d => d.SalonId)
+            modelBuilder.Entity<AccountInSalon>(entity =>
+            {
+                entity.ToTable("AccountInSalon");
+
+                entity.Property(e => e.Id).ValueGeneratedNever();
+
+                entity.HasOne(d => d.Member)
+                    .WithMany(p => p.AccountInSalonMembers)
+                    .HasForeignKey(d => d.MemberId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK__Account__SalonId__2C3393D0");
+                    .HasConstraintName("FK_AccountInSalon_Account1");
+
+                entity.HasOne(d => d.SalonOwner)
+                    .WithMany(p => p.AccountInSalonSalonOwners)
+                    .HasForeignKey(d => d.SalonOwnerId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_AccountInSalon_Account");
             });
 
             modelBuilder.Entity<Address>(entity =>
             {
                 entity.ToTable("Address");
-
-                entity.Property(e => e.Id).ValueGeneratedNever();
 
                 entity.Property(e => e.Location)
                     .IsRequired()
@@ -112,8 +125,6 @@ namespace Infrastructure.Contexts
             modelBuilder.Entity<Booking>(entity =>
             {
                 entity.ToTable("Booking");
-
-                entity.Property(e => e.Id).ValueGeneratedNever();
 
                 entity.Property(e => e.BookingType)
                     .IsRequired()
@@ -150,12 +161,6 @@ namespace Infrastructure.Contexts
                     .HasForeignKey(d => d.GalleryId)
                     .HasConstraintName("FK_Booking_Gallery");
 
-                entity.HasOne(d => d.Salon)
-                    .WithMany(p => p.Bookings)
-                    .HasForeignKey(d => d.SalonId)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK__Booking__SalonId__37A5467C");
-
                 entity.HasOne(d => d.SalonMemberAccount)
                     .WithMany(p => p.BookingSalonMemberAccounts)
                     .HasForeignKey(d => d.SalonMemberAccountId)
@@ -166,8 +171,6 @@ namespace Infrastructure.Contexts
             modelBuilder.Entity<BookingActivity>(entity =>
             {
                 entity.ToTable("BookingActivity");
-
-                entity.Property(e => e.Id).ValueGeneratedNever();
 
                 entity.Property(e => e.CreatedAt).HasColumnType("datetime");
 
@@ -185,8 +188,6 @@ namespace Infrastructure.Contexts
             modelBuilder.Entity<BookingDetail>(entity =>
             {
                 entity.ToTable("BookingDetail");
-
-                entity.Property(e => e.Id).ValueGeneratedNever();
 
                 entity.Property(e => e.Price)
                     .HasMaxLength(10)
@@ -222,29 +223,27 @@ namespace Infrastructure.Contexts
             {
                 entity.ToTable("Gallery");
 
-                entity.Property(e => e.Id).ValueGeneratedNever();
-
                 entity.Property(e => e.Description)
                     .IsRequired()
-                    .HasMaxLength(10)
-                    .IsFixedLength(true);
+                    .HasMaxLength(100);
 
                 entity.Property(e => e.Name)
                     .IsRequired()
                     .HasMaxLength(50);
 
-                entity.HasOne(d => d.Salon)
+                entity.Property(e => e.ShareSetting)
+                    .HasMaxLength(30)
+                    .IsUnicode(false);
+
+                entity.HasOne(d => d.DefaultImage)
                     .WithMany(p => p.Galleries)
-                    .HasForeignKey(d => d.SalonId)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK_Gallery_Salon");
+                    .HasForeignKey(d => d.DefaultImageId)
+                    .HasConstraintName("FK_Gallery_Image");
             });
 
             modelBuilder.Entity<Image>(entity =>
             {
                 entity.ToTable("Image");
-
-                entity.Property(e => e.Id).ValueGeneratedNever();
 
                 entity.Property(e => e.Description)
                     .IsRequired()
@@ -255,6 +254,11 @@ namespace Infrastructure.Contexts
                     .HasMaxLength(100)
                     .IsUnicode(false);
 
+                entity.Property(e => e.ShareSetting)
+                    .IsRequired()
+                    .HasMaxLength(30)
+                    .IsUnicode(false);
+
                 entity.HasOne(d => d.Gallery)
                     .WithMany(p => p.Images)
                     .HasForeignKey(d => d.GalleryId)
@@ -262,29 +266,9 @@ namespace Infrastructure.Contexts
                     .HasConstraintName("FK_Image_Gallery");
             });
 
-            modelBuilder.Entity<Salon>(entity =>
-            {
-                entity.ToTable("Salon");
-
-                entity.Property(e => e.Id).ValueGeneratedNever();
-
-                entity.Property(e => e.SalonType)
-                    .IsRequired()
-                    .HasMaxLength(20)
-                    .IsUnicode(false);
-
-                entity.HasOne(d => d.Address)
-                    .WithMany(p => p.Salons)
-                    .HasForeignKey(d => d.AddressId)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK_Salon_Address");
-            });
-
             modelBuilder.Entity<Service>(entity =>
             {
                 entity.ToTable("Service");
-
-                entity.Property(e => e.Id).ValueGeneratedNever();
 
                 entity.Property(e => e.CreatedDate).HasColumnType("datetime");
 
@@ -304,6 +288,12 @@ namespace Infrastructure.Contexts
 
                 entity.Property(e => e.UpdatedDate).HasColumnType("datetime");
 
+                entity.HasOne(d => d.Account)
+                    .WithMany(p => p.Services)
+                    .HasForeignKey(d => d.AccountId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_Service_Account");
+
                 entity.HasOne(d => d.Category)
                     .WithMany(p => p.Services)
                     .HasForeignKey(d => d.CategoryId)
@@ -315,19 +305,11 @@ namespace Infrastructure.Contexts
                     .HasForeignKey(d => d.GalleryId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("FK_Service_Gallery");
-
-                entity.HasOne(d => d.Salon)
-                    .WithMany(p => p.Services)
-                    .HasForeignKey(d => d.SalonId)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK__Service__SalonId__31EC6D26");
             });
 
             modelBuilder.Entity<ServiceInCombo>(entity =>
             {
                 entity.ToTable("ServiceInCombo");
-
-                entity.Property(e => e.Id).ValueGeneratedNever();
 
                 entity.Property(e => e.Description)
                     .IsRequired()
@@ -355,8 +337,6 @@ namespace Infrastructure.Contexts
             {
                 entity.ToTable("ServiceType");
 
-                entity.Property(e => e.Id).ValueGeneratedNever();
-
                 entity.Property(e => e.Description)
                     .IsRequired()
                     .HasMaxLength(100);
@@ -364,12 +344,6 @@ namespace Infrastructure.Contexts
                 entity.Property(e => e.Name)
                     .IsRequired()
                     .HasMaxLength(100);
-
-                entity.HasOne(d => d.Gallery)
-                    .WithMany(p => p.ServiceTypes)
-                    .HasForeignKey(d => d.GalleryId)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK_ServiceType_Gallery");
             });
 
             OnModelCreatingPartial(modelBuilder);
