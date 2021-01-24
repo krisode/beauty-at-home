@@ -1,7 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
+using BeautyAtHome.Utils;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using static BeautyAtHome.Utils.Constants;
@@ -10,29 +9,29 @@ namespace BeautyAtHome
 {
     public class RequiredRoleHandler : AuthorizationHandler<RequiredRoleRequirement>
     {
-        IHttpContextAccessor _httpContextAccessor = null;
-        public RequiredRoleHandler(IHttpContextAccessor httpContextAccessor)
+        private readonly IJwtTokenProvider _jwtTokenProvider;
+
+        public RequiredRoleHandler(IJwtTokenProvider jwtTokenProvider)
         {
-            _httpContextAccessor = httpContextAccessor;
+            _jwtTokenProvider = jwtTokenProvider;
         }
+
         protected override async Task<Task> HandleRequirementAsync(AuthorizationHandlerContext context, RequiredRoleRequirement requirement)
         {
-            HttpContext httpContext = _httpContextAccessor.HttpContext;
+
+            DefaultHttpContext httpContext = (DefaultHttpContext)context.Resource;
 
             string jwtToken = httpContext.Request.Headers["Authorization"].ToString().Replace("Bearer ", "");
 
-            var auth = FirebaseAdmin.Auth.FirebaseAuth.DefaultInstance;
-
             try
             {
-                var response = await auth.VerifyIdTokenAsync(jwtToken);
-                string role = (string) response.Claims.GetValueOrDefault(TokenClaims.ROLE, null);
+                string role = await _jwtTokenProvider.GetPayloadFromToken(jwtToken, TokenClaims.ROLE);
                 if (role.Equals(requirement.Role))
                 {
                     context.Succeed(requirement);
                 }
             }
-            catch (FirebaseAdmin.FirebaseException)
+            catch (Exception)
             {
             }
             return Task.CompletedTask;

@@ -1,11 +1,8 @@
 ﻿using ApplicationCore.Services;
 using AutoMapper;
-using BeautyAtHome.Utils;
 using BeautyAtHome.ViewModels;
-using Infrastructure.Contexts;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;

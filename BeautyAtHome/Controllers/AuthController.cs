@@ -15,10 +15,12 @@ namespace BeautyAtHome.Controllers
     public class AuthController : ControllerBase
     {
         private readonly IAccountService _accountService;
+        private readonly IJwtTokenProvider _jwtTokenProvider;
 
-        public AuthController(IAccountService accountService)
+        public AuthController(IAccountService accountService, IJwtTokenProvider jwtTokenProvider)
         {
             _accountService = accountService;
+            _jwtTokenProvider = jwtTokenProvider;
         }
 
         [HttpPost("login")]
@@ -59,7 +61,7 @@ namespace BeautyAtHome.Controllers
                     { "role", accountCreated.Role},
                 };
 
-                string customToken = await auth.CreateCustomTokenAsync(uid.ToString(), additionalClaims);
+                string customToken = await _jwtTokenProvider.GenerateToken(accountCreated);
 
                 response = new AuthVM()
                 {
@@ -67,7 +69,7 @@ namespace BeautyAtHome.Controllers
                     DisplayName = accountCreated.DisplayName,
                     Role = accountCreated.Role,
                     AccessToken = customToken,
-                    ExpiresIn = Constants.EXPIRES_IN_AN_HOUR
+                    ExpiresIn = Constants.EXPIRES_IN_DAY
                 };
             }
             catch (Exception e)
