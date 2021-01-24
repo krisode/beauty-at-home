@@ -1,6 +1,8 @@
 ﻿using ApplicationCore.Services;
 using AutoMapper;
+using BeautyAtHome.Utils;
 using BeautyAtHome.ViewModels;
+using Infrastructure.Contexts;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
@@ -43,7 +45,7 @@ namespace BeautyAtHome.Controllers
         [ProducesResponseType(StatusCodes.Status200OK)]
         /*[SwaggerResponseExample(StatusCodes.Status200OK, typeof (ApplicationCore.DTOs.Service))]*/
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public ActionResult<ServiceViewModelVM> GetServiceById(long id)
+        public ActionResult<ServiceViewModelVM> GetServiceById(int id)
         {
 
             var service = _service.GetById(id);
@@ -94,8 +96,8 @@ namespace BeautyAtHome.Controllers
         public async Task<ActionResult<IEnumerable<ServiceViewModelVM>>> GetService([FromQuery] ServiceViewModelSM serviceModel, int pageSize, int pageIndex, bool sort)
         {
             var rtnList = _service.GetEnumAll();
-            
-            
+
+
             if (serviceModel.Id.Length != 0)
             {
                 for (int i = 0; i < serviceModel.Id.Length; i++)
@@ -107,23 +109,23 @@ namespace BeautyAtHome.Controllers
             if (!string.IsNullOrEmpty(serviceModel.ServiceName))
             {
                 rtnList = rtnList.Where(s => s.ServiceName.Contains(serviceModel.ServiceName));
-            } 
+            }
 
             if (serviceModel.CreatedAtMin != null)
             {
                 rtnList = rtnList.Where(s => s.CreatedDate >= serviceModel.CreatedAtMin);
             }
-            
+
             if (serviceModel.CreatedAtMax != null)
             {
                 rtnList = rtnList.Where(s => s.CreatedDate <= serviceModel.CreatedAtMax);
             }
-            
+
             if (serviceModel.UpdatedAtMin != null)
             {
                 rtnList = rtnList.Where(s => s.UpdatedDate >= serviceModel.UpdatedAtMin);
             }
-            
+
             if (serviceModel.UpdatedAtMax != null)
             {
                 rtnList = rtnList.Where(s => s.UpdatedDate <= serviceModel.UpdatedAtMax);
@@ -149,28 +151,12 @@ namespace BeautyAtHome.Controllers
                 rtnList = rtnList.Where(s => s.EstimateTime <= serviceModel.LowerTime);
             }
 
+            IQueryable<Service> queryList = null;
 
-            int count = rtnList.Count();
-
-            int totalPages = (int)Math.Ceiling(count / (double) pageSize);
-
-            var items = rtnList.Skip((pageIndex - 1) * pageSize).Take(pageSize).ToList();
-
-            var previousPage = pageIndex > 1 ? "Yes" : "No";
-
-            var nextPage = pageIndex < totalPages ? "Yes" : "No";
-
-            var paginationMetadata = new
-            {
-                totalCount = count,
-                pageSize = pageSize,
-                currentPage = pageIndex,
-                totalPages = totalPages,
-                previousPage,
-                nextPage
-            };
-
-            Response.Headers.Add("Paging-Headers", JsonConvert.SerializeObject(paginationMetadata));
+            PagingSupport<Service> pagingList = new PagingSupport<Service>(queryList);
+            PagingViewModel<Service> pagingViewModel = pagingList
+                .GetRange(pageIndex, pageSize, s => s.Id)
+                .ToPagingViewModel();
 
             return Ok(rtnList);
         }
@@ -239,19 +225,19 @@ namespace BeautyAtHome.Controllers
                 return BadRequest(service);
             }*/
 
-            /*_service.Add(service);*/
-            
-            /*if ()
+        /*_service.Add(service);*/
 
-            Service service = _mapper.Map<Service>(serviceModel);*//*
+        /*if ()
+
+        Service service = _mapper.Map<Service>(serviceModel);*//*
 
 
-            DateTime crtDate = DateTime.Now;
-            
+        DateTime crtDate = DateTime.Now;
 
-            await _service.Save();
-            return CreatedAtAction("GetServiceById", new { id = service.Id }, service);*//*
-        }*/
+
+        await _service.Save();
+        return CreatedAtAction("GetServiceById", new { id = service.Id }, service);*//*
+    }*/
 
         /*/// <summary>
         /// Update service with specified id
