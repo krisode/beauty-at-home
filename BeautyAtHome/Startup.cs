@@ -55,13 +55,14 @@ namespace BeautyAtHome
             services.AddSingleton<IAuthorizationPolicyProvider, RequiredRolePolicyProvider>();
             services.AddSingleton<IAuthorizationHandler, RequiredRoleHandler>();
 
-            services.AddTransient<IServiceRepository, ServiceRepository>();
-            services.AddTransient<IBeautyServicesService, BeautyServicesService>();
+            services.AddTransient(typeof(IRepository<>), typeof(Repository<>));
 
-            services.AddTransient<IAccountRepository, AccountRepository>();
+            services.AddTransient<IBeautyServicesService, BeautyServicesService>();
             services.AddTransient<IAccountService, AccountService>();
 
             services.AddSingleton<IJwtTokenProvider, JwtTokenProvider>();
+            services.AddSingleton(typeof(IPagingSupport<>), typeof(PagingSupport<>));
+
             services
             .AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             .AddJwtBearer(options =>

@@ -28,7 +28,7 @@ namespace ApplicationCore.Services
             _iRepository.Add(service);
         }
 
-        public Service GetById(long id)
+        public Service GetById(int id)
         {
             return _iRepository.GetById(id);
         }
