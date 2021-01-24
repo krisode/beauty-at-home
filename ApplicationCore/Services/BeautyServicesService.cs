@@ -63,6 +63,11 @@ namespace ApplicationCore.Services
             return _iRepository.GetQueryList(where);
         }
 
+        public IQueryable<Service> GetQueryList(params Expression<Func<Service, bool>>[] where)
+        {
+            return _iRepository.GetQueryList(where);
+        }
+
         public IQueryable<Service> GetQueryList(Expression<Func<Service, bool>> where, params Expression<Func<Service, object>>[] includes)
         {
             return _iRepository.GetQueryList(where, includes);

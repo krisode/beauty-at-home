@@ -3,24 +3,24 @@ using System.ComponentModel.DataAnnotations;
 
 namespace BeautyAtHome.ViewModels
 {
-    public class ServiceViewModelCM
+    public class ServiceCM
     {
         public string Description { get; set; }
         public string ServiceName { get; set; }
         public decimal Price { get; set; }
         public int EstimateTime { get; set; }
         [Required]
-        public long SalonId { get; set; }
+        public int AccountId { get; set; }
         [Required]
-        public long CategoryId { get; set; }
+        public int CategoryId { get; set; }
         public bool IsServiceCombo { get; set; }
         [Required]
-        public long GalleryId { get; set; }
+        public int GalleryId { get; set; }
     }
-    public class ServiceViewModelVM
+    public class ServiceVM
     {
         [Required]
-        public long Id { get; set; }
+        public int Id { get; set; }
         public string Description { get; set; }
         public string ServiceName { get; set; }
         public DateTime CreatedDate { get; set; }
@@ -28,18 +28,18 @@ namespace BeautyAtHome.ViewModels
         public decimal Price { get; set; }
         public int EstimateTime { get; set; }
         [Required]
-        public long SalonId { get; set; }
-        
-        public long CategoryId { get; set; }
+        public int AccountId { get; set; }
+        [Required]
+        public int CategoryId { get; set; }
         public string Status { get; set; }
         public bool IsServiceCombo { get; set; }
         [Required]
-        public long GalleryId { get; set; }
+        public int GalleryId { get; set; }
     }
 
-    public class ServiceViewModelSM
+    public class ServiceSM
     {
-        public long[] Id { get; set; }
+        public int[] Id { get; set; }
         public string ServiceName { get; set; }
         public DateTime? CreatedAtMin { get; set; }
         public DateTime? CreatedAtMax { get; set; }
@@ -50,27 +50,27 @@ namespace BeautyAtHome.ViewModels
         public int LowerTime { get; set; }
         public int UpperTime { get; set; }
         [Required]
-        public long SalonId { get; set; }
+        public int AccountId { get; set; }
         [Required]
-        public long CategoryId { get; set; }
+        public int CategoryId { get; set; }
         public string Status { get; set; }
         public bool IsServiceCombo { get; set; }
         [Required]
-        public long GalleryId { get; set; }
+        public int GalleryId { get; set; }
         public int PageSize { get; set; }
         public int PageIndex { get; set; }
 
     }
 
-    public class ServiceViewModelUM
+    public class ServiceUM
     {
         [Required]
-        public long Id { get; set; }
+        public int Id { get; set; }
         public string Description { get; set; }
         public string ServiceName { get; set; }
         public decimal Price { get; set; }
         public int EstimateTime { get; set; }
-        public long SalonId { get; set; }
+        public long AccountId { get; set; }
         public long CategoryId { get; set; }
         public bool IsServiceCombo { get; set; }
         public long GalleryId { get; set; }

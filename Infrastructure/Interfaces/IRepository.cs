@@ -7,7 +7,7 @@ namespace Infrastructure.Interfaces
 {
     public interface IRepository<T>
     {
-        T GetById(long id);
+        T GetById(int id);
 
         T Get(Expression<Func<T, bool>> where);
 
@@ -26,6 +26,8 @@ namespace Infrastructure.Interfaces
         IEnumerable<T> GetEnumList(Expression<Func<T, bool>> where);
 
         IQueryable<T> GetQueryList(Expression<Func<T, bool>> where);
+
+        IQueryable<T> GetQueryList(params Expression<Func<T, bool>>[] where);
 
         IQueryable<T> GetQueryList(Expression<Func<T, bool>> where, params Expression<Func<T, object>>[] includes);
 

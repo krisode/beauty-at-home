@@ -30,5 +30,12 @@
         {
             public const string ACTIVE = "ACTIVE";
         }
+
+        public static class Status
+        {
+            public const string ENABLED = "ENABLED";
+
+            public const string DISABLED = "DISABLED";
+        }
     }
 }

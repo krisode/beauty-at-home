@@ -8,9 +8,13 @@ namespace BeautyAtHome.Utils
     {
         public AutoMapperProfile()
         {
-            CreateMap<ServiceViewModelCM, Service>();
-            CreateMap<Service, ServiceViewModelVM>();
-            CreateMap<ServiceViewModelVM, Service>();
+            #region AutoMapper ServiceViewModel
+            CreateMap<ServiceCM, Service>();
+            CreateMap<Service, ServiceVM>();
+            CreateMap<ServiceVM, Service>();
+            CreateMap<ServiceCM, Service>();
+            CreateMap<ServiceUM, Service>();
+            #endregion
         }
     }
 }
