@@ -45,6 +45,7 @@ namespace BeautyAtHome.Controllers
         [ProducesResponseType(StatusCodes.Status200OK)]
         /*[SwaggerResponseExample(StatusCodes.Status200OK, typeof (ApplicationCore.DTOs.Service))]*/
         [ProducesResponseType(StatusCodes.Status404NotFound)]
+
         public ActionResult<ServiceVM> GetServiceById(int id)
         {
 
@@ -97,8 +98,6 @@ namespace BeautyAtHome.Controllers
         {
             var rtnList = _service.GetEnumAll();
 
-            var testList = _service.GetQueryList(s => s.ServiceName.Contains("s"));
-            
             if (serviceModel.Id.Length != 0)
             {
                 for (int i = 0; i < serviceModel.Id.Length; i++)
@@ -110,23 +109,23 @@ namespace BeautyAtHome.Controllers
             if (!string.IsNullOrEmpty(serviceModel.ServiceName))
             {
                 rtnList = rtnList.Where(s => s.ServiceName.Contains(serviceModel.ServiceName));
-            } 
+            }
 
             if (serviceModel.CreatedAtMin != null)
             {
                 rtnList = rtnList.Where(s => s.CreatedDate >= serviceModel.CreatedAtMin);
             }
-            
+
             if (serviceModel.CreatedAtMax != null)
             {
                 rtnList = rtnList.Where(s => s.CreatedDate <= serviceModel.CreatedAtMax);
             }
-            
+
             if (serviceModel.UpdatedAtMin != null)
             {
                 rtnList = rtnList.Where(s => s.UpdatedDate >= serviceModel.UpdatedAtMin);
             }
-            
+
             if (serviceModel.UpdatedAtMax != null)
             {
                 rtnList = rtnList.Where(s => s.UpdatedDate <= serviceModel.UpdatedAtMax);
@@ -152,6 +151,7 @@ namespace BeautyAtHome.Controllers
                 rtnList = rtnList.Where(s => s.EstimateTime <= serviceModel.LowerTime);
             }
 
+
             
             int count = rtnList.Count();
 
@@ -174,6 +174,13 @@ namespace BeautyAtHome.Controllers
             };
 
             Response.Headers.Add("Paging-Headers", JsonConvert.SerializeObject(paginationMetadata));
+
+            IQueryable<Service> queryList = null;
+
+            PagingSupport<Service> pagingList = new PagingSupport<Service>(queryList);
+            PagingViewModel<Service> pagingViewModel = pagingList
+                .GetRange(pageIndex, pageSize, s => s.Id)
+                .ToPagingViewModel();
 
             return Ok(rtnList);
         }

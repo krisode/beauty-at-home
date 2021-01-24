@@ -6,8 +6,9 @@ using System.Threading.Tasks;
 
 namespace ApplicationCore.Services
 {
-    public interface IService<T> where T : class
+    public interface IService<T> : IBaseService<T> where T : class 
     {
+
         void Add(T entity);
         T GetById(int Id);
         void Update(T entity);
