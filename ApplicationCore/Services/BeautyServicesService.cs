@@ -28,7 +28,7 @@ namespace ApplicationCore.Services
             _iRepository.Add(service);
         }
 
-        public Service GetById(long id)
+        public Service GetById(int id)
         {
             return _iRepository.GetById(id);
         }
@@ -59,6 +59,11 @@ namespace ApplicationCore.Services
         }
 
         public IQueryable<Service> GetQueryList(Expression<Func<Service, bool>> where)
+        {
+            return _iRepository.GetQueryList(where);
+        }
+
+        public IQueryable<Service> GetQueryList(params Expression<Func<Service, bool>>[] where)
         {
             return _iRepository.GetQueryList(where);
         }

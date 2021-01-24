@@ -1,6 +1,8 @@
 ﻿using ApplicationCore.Services;
 using AutoMapper;
+using BeautyAtHome.Utils;
 using BeautyAtHome.ViewModels;
+using Infrastructure.Contexts;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
@@ -43,7 +45,7 @@ namespace BeautyAtHome.Controllers
         [ProducesResponseType(StatusCodes.Status200OK)]
         /*[SwaggerResponseExample(StatusCodes.Status200OK, typeof (ApplicationCore.DTOs.Service))]*/
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public ActionResult<ServiceViewModelVM> GetServiceById(long id)
+        public ActionResult<ServiceVM> GetServiceById(int id)
         {
 
             var service = _service.GetById(id);
@@ -53,7 +55,7 @@ namespace BeautyAtHome.Controllers
                 return NotFound();
             }
 
-            var rtnService = _mapper.Map<ServiceViewModelVM>(service);
+            var rtnService = _mapper.Map<ServiceVM>(service);
 
             /*try
             {
@@ -91,10 +93,11 @@ namespace BeautyAtHome.Controllers
         [Produces("application/json")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<ActionResult<IEnumerable<ServiceViewModelVM>>> GetService([FromQuery] ServiceViewModelSM serviceModel, int pageSize, int pageIndex, bool sort)
+        public async Task<ActionResult<IEnumerable<ServiceVM>>> GetService([FromQuery] ServiceSM serviceModel, int pageSize, int pageIndex, bool sort)
         {
             var rtnList = _service.GetEnumAll();
-            
+
+            var testList = _service.GetQueryList(s => s.ServiceName.Contains("s"));
             
             if (serviceModel.Id.Length != 0)
             {
@@ -149,7 +152,7 @@ namespace BeautyAtHome.Controllers
                 rtnList = rtnList.Where(s => s.EstimateTime <= serviceModel.LowerTime);
             }
 
-
+            
             int count = rtnList.Count();
 
             int totalPages = (int)Math.Ceiling(count / (double) pageSize);
@@ -202,7 +205,7 @@ namespace BeautyAtHome.Controllers
             return Ok(lst);
         }
 
-        /*/// <summary>
+        /// <summary>
         /// Create a new service
         /// </summary>
         /// <remarks>
@@ -210,96 +213,132 @@ namespace BeautyAtHome.Controllers
         ///
         ///     POST 
         ///     {
-        ///         "id": 1,
         ///         "description": "TODO something",
-        ///         "serviceName": "Service name",
-        ///         "createdDate": "2021-01-22 00:00:00",
-        ///         "updatedDate": "2021-01-22 00:00:00",
+        ///         "serviceName": "Service name",     
         ///         "price": 50,
         ///         "estimateTime": 30,
         ///         "salonId": 1,
         ///         "categoryId": 1,
-        ///         "status": "Active"
         ///         "isServiceCombo": "True",
         ///         "galleryId": 1
         ///     }
         ///
         /// </remarks>
         /// <response code="201">Created new service</response>
+        /// <response code="400">Account's id or service type's id or gallery's id does not exist</response>
+        /// <response code="500">Failed to save request</response>
         [HttpPost]
         [Route("api/v1.0/services")]
         [Produces("application/json")]
         [ProducesResponseType(StatusCodes.Status201Created)]
-        *//*[ProducesResponseType(StatusCodes.)]*//*
-        public async Task<ActionResult<ServiceViewModelCM>> CreateService([FromBody] ServiceViewModelCM serviceModel)
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public async Task<ActionResult<ServiceCM>> CreateService([FromBody] ServiceCM serviceModel)
         {
-
-            *//*if (ServiceExists(service.Id) != null)
-            {
-                return BadRequest(service);
-            }*/
-
-            /*_service.Add(service);*/
-            
-            /*if ()
-
-            Service service = _mapper.Map<Service>(serviceModel);*//*
-
+            //TODO: Implements AccountService.GetById(int id) does not exist, return BadRequest()
+            //TODO: Implements CategoryId.GetById(int id) does not exist, return BadRequest()
+            //TODO: Implements GaleryId.GetById(int id) does not exist, return BadRequest()
 
             DateTime crtDate = DateTime.Now;
-            
+            DateTime updDate = DateTime.Now;
+            string status = Constants.Status.ENABLED;
+            var crtService = _mapper.Map<Service>(serviceModel);
 
-            await _service.Save();
-            return CreatedAtAction("GetServiceById", new { id = service.Id }, service);*//*
-        }*/
+            try
+            {
+                crtService.CreatedDate = crtDate;
+                crtService.UpdatedDate = updDate;
+                crtService.Status = status;
 
-        /*/// <summary>
+                _service.Add(crtService);
+                await _service.Save();
+                
+            }
+            catch (Exception)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError);
+            }
+
+            return CreatedAtAction("GetServiceById", new { id = crtService.Id }, crtService);
+        }
+
+        /// <summary>
         /// Update service with specified id
         /// </summary>
-        /// <param name="id"></param>
-        /// <param name="service"></param>
+        /// <param name="id">Service's id</param>
+        /// <param name="service">Information applied to updated service</param>
+        /// <response code="204">Update service successfully</response>
+        /// <response code="400">Service's id does not exist or does not match with the id in parameter</response>
+        /// <response code="500">Failed to update</response>
         [HttpPut]
         [Route("api/v1.0/services/{id}")]
         [Produces("application/json")]
-        public async Task<ActionResult> PutService(long id, [FromBody] Service service)
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public async Task<ActionResult> PutService(int id, [FromBody] ServiceUM service)
         {
-            var dltService = ServiceExists(id);
-            if (dltService == null && dltService.Id != service.Id)
+            if (_service.GetById(id) == null || id != service.Id)
             {
-                return BadRequest(service);
+                return BadRequest();
             }
 
-            _service.Update(service);
-            await _service.Save();
+            DateTime updDate = DateTime.Now;
+            var updService = _mapper.Map<Service>(service);
+            updService.UpdatedDate = updDate;
+            try
+            {
+                _service.Update(updService);
+                await _service.Save();
+                
+            }
+            catch (Exception)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError);
+            }
+
             return NoContent();
         }
 
         /// <summary>
-        /// Delete a service by specified id
+        /// Change the status of service to disabled
         /// </summary>
-        /// <param name="id"></param>
+        /// <param name="id">Service's id</param>
+        /// <response code="204">Update service's status successfully</response>
+        /// <response code="400">Service's id does not exist</response>
+        /// <response code="500">Failed to update</response>
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         [HttpDelete]
         [Route("api/v1.0/services/{id}")]
         [Produces("application/json")]
-        public async Task<ActionResult> DeleteService(long id)
+        public async Task<ActionResult> DeleteService(int id)
         {
-            if (ServiceExists(id) == null)
+            if (_service.GetById(id) == null)
             {
-                return NotFound();
+                return BadRequest();
             }
 
-            _service.Delete(s => s.Id == id);
-            await _service.Save();
+            DateTime updTime = DateTime.Now;
+            string status = Constants.Status.DISABLED;
+
+            var dltService = _service.GetById(id);
+            dltService.UpdatedDate = updTime;
+            dltService.Status = status;
+
+            try
+            {
+                _service.Update(dltService);
+                await _service.Save(); 
+            }
+            catch (Exception)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError);
+            }
+           
             return NoContent();
-        }*/
-
-
-        /*private Service ServiceExists(long id)
-        {
-            var service = _service.GetById(id);
-            return service != null ? service : null; 
-        }*/
-
+        }
 
     }
 }

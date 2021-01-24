@@ -36,7 +36,7 @@ namespace Infrastructure.Interfaces.Implements
             return _dbSet.Find(where);
         }
 
-        public virtual T GetById(long id)
+        public virtual T GetById(int id)
         {
             return _dbSet.Find(id);
         }
@@ -87,6 +87,16 @@ namespace Infrastructure.Interfaces.Implements
         public virtual IQueryable<T> GetQueryList(Expression<Func<T, bool>> where)
         {
             var lstGet = _dbSet.Where(where);
+            return lstGet;
+        }
+
+        public virtual IQueryable<T> GetQueryList(params Expression<Func<T, bool>>[] where)
+        {
+            IQueryable<T> lstGet = null;
+            foreach (var expression in where)
+            {
+                lstGet = _dbSet.Where(expression);
+            }
             return lstGet;
         }
 
