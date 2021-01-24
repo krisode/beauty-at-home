@@ -1,15 +1,11 @@
 ﻿using ApplicationCore.Services;
 using BeautyAtHome.Utils;
 using BeautyAtHome.ViewModels;
-using FirebaseAdmin;
-using FirebaseAdmin.Auth;
 using Infrastructure.Contexts;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Net;
 using System.Threading.Tasks;
 
 namespace BeautyAtHome.Controllers
@@ -30,12 +26,19 @@ namespace BeautyAtHome.Controllers
         [ProducesResponseType(StatusCodes.Status200OK)]
         public async Task<ActionResult> LoginAccount([FromBody] AuthCM authCM)
         {
-            AuthVM response = null;
             var auth = FirebaseAdmin.Auth.FirebaseAuth.DefaultInstance;
             try
             {
-                var tokenResponse = await auth.VerifyIdTokenAsync(authCM.AccessToken);
+                await auth.VerifyIdTokenAsync(authCM.AccessToken);
+            }
+            catch (Exception)
+            {
+                return Unauthorized();
+            }
 
+            AuthVM response;
+            try
+            {
                 Account accountCreated = _accountService.GetByEmail(authCM.Email);
 
                 if (accountCreated == null)
@@ -56,18 +59,21 @@ namespace BeautyAtHome.Controllers
                     { "role", accountCreated.Role},
                 };
 
-                string customToken = await FirebaseAuth.DefaultInstance.CreateCustomTokenAsync(uid.ToString(), additionalClaims);
+                string customToken = await auth.CreateCustomTokenAsync(uid.ToString(), additionalClaims);
 
                 response = new AuthVM()
                 {
-                    Id = accountCreated.Id,
+                    Uid = accountCreated.Id,
+                    DisplayName = accountCreated.DisplayName,
+                    Role = accountCreated.Role,
                     AccessToken = customToken,
-                    DisplayName = accountCreated.DisplayName
+                    ExpiresIn = Constants.EXPIRES_IN_AN_HOUR
                 };
             }
-            catch (FirebaseException)
+            catch (Exception e)
             {
-                return Unauthorized();
+                Response.StatusCode = StatusCodes.Status500InternalServerError;
+                return new JsonResult(e.Message);
             }
             return Ok(response);
         }

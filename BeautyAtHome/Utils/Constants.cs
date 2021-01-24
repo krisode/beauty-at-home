@@ -12,6 +12,8 @@ namespace BeautyAtHome.Utils
 
         public static readonly int MAXIMUM_PAGE_SIZE = 250;
 
+        public static readonly string EXPIRES_IN_AN_HOUR = "3600";
+
         public static class Role
         {
             public const string ADMIN = "CUSTOMER";
