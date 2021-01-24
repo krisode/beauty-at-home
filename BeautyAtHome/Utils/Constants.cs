@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-
-namespace BeautyAtHome.Utils
+﻿namespace BeautyAtHome.Utils
 {
     public class Constants
     {
@@ -11,6 +6,8 @@ namespace BeautyAtHome.Utils
         public static readonly int PAGE_SIZE = 50;
 
         public static readonly int MAXIMUM_PAGE_SIZE = 250;
+
+        public static readonly string EXPIRES_IN_DAY = "86400";
 
         public static class Role
         {
@@ -25,7 +22,13 @@ namespace BeautyAtHome.Utils
         public static class TokenClaims
         {
             public const string ROLE = "role";
+            public const string UID = "uid";
+
         }
 
+        public static class AccountStatus
+        {
+            public const string ACTIVE = "ACTIVE";
+        }
     }
 }

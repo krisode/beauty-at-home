@@ -1,10 +1,4 @@
-﻿using Infrastructure.Contexts;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-
-namespace BeautyAtHome.ViewModels
+﻿namespace BeautyAtHome.ViewModels
 {
     public class AuthCM
     {
@@ -15,11 +9,11 @@ namespace BeautyAtHome.ViewModels
 
     public class AuthVM
     {
-        public string AccessToken { get; set; }
+        public int Uid { get; set; }
         public string DisplayName { get; set; }
-        public string Email { get; set; }
-        public string Phone { get; set; }
-        public ICollection<Address> Addresses{ get; set; }
+        public string Role { get; set; }
+        public string AccessToken { get; set; }
+        public string ExpiresIn { get; set; }
     }
 
 

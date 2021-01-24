@@ -1,5 +1,7 @@
 using ApplicationCore.Services;
 using AutoMapper;
+using BeautyAtHome.Authorization;
+using BeautyAtHome.Utils;
 using FirebaseAdmin;
 using Google.Apis.Auth.OAuth2;
 using Infrastructure.Contexts;
@@ -7,6 +9,7 @@ using Infrastructure.Interfaces;
 using Infrastructure.Interfaces.Implements;
 using Infrastructure.Repositories;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
@@ -19,6 +22,7 @@ using Swashbuckle.AspNetCore.Filters;
 using System;
 using System.IO;
 using System.Reflection;
+using System.Text;
 
 namespace BeautyAtHome
 {
@@ -48,24 +52,28 @@ namespace BeautyAtHome
             services.AddScoped<IDatabaseFactory, DatabaseFactory>();
             services.AddTransient<IUnitOfWork, UnitOfWork>();
 
+            services.AddSingleton<IAuthorizationPolicyProvider, RequiredRolePolicyProvider>();
+            services.AddSingleton<IAuthorizationHandler, RequiredRoleHandler>();
+
             services.AddTransient<IServiceRepository, ServiceRepository>();
             services.AddTransient<IBeautyServicesService, BeautyServicesService>();
 
             services.AddTransient<IAccountRepository, AccountRepository>();
             services.AddTransient<IAccountService, AccountService>();
 
+            services.AddSingleton<IJwtTokenProvider, JwtTokenProvider>();
             services
             .AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             .AddJwtBearer(options =>
             {
-                options.Authority = "https://securetoken.google.com/testauthentication-a4c25";
                 options.TokenValidationParameters = new TokenValidationParameters
                 {
+                    ValidateIssuerSigningKey = true,
                     ValidateIssuer = true,
-                    ValidIssuer = "https://securetoken.google.com/testauthentication-a4c25",
                     ValidateAudience = true,
-                    ValidAudience = "testauthentication-a4c25",
-                    ValidateLifetime = true
+                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(Configuration["jwt:Key"])),
+                    ValidAudience = Configuration["jwt:Audience"],
+                    ValidIssuer = Configuration["jwt:Issuer"],
                 };
             });
             services.AddControllers();

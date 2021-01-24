@@ -1,9 +1,6 @@
-﻿using ApplicationCore.Enums;
-using Microsoft.AspNetCore.Authentication.Cookies;
+﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using static BeautyAtHome.Utils.Constants;
 
@@ -11,7 +8,8 @@ namespace BeautyAtHome.Authorization
 {
     public class RequiredRolePolicyProvider : IAuthorizationPolicyProvider
     {
-        public Task<AuthorizationPolicy> GetDefaultPolicyAsync() => Task.FromResult<AuthorizationPolicy>(null);
+        public Task<AuthorizationPolicy> GetDefaultPolicyAsync() => 
+            Task.FromResult(new AuthorizationPolicyBuilder(JwtBearerDefaults.AuthenticationScheme).RequireAuthenticatedUser().Build());
 
         public Task<AuthorizationPolicy> GetFallbackPolicyAsync() => Task.FromResult<AuthorizationPolicy>(null);
 
