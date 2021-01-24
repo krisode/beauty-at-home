@@ -13,10 +13,15 @@ namespace ApplicationCore.Services
     {
 
     }
+
     public class BeautyServicesService : IBeautyServicesService
     {
         private readonly IUnitOfWork _iUnitOfWork;
         private readonly IServiceRepository _iRepository;
+
+        public BeautyServicesService()
+        {
+        }
 
         public BeautyServicesService(IUnitOfWork unitOfWork, IServiceRepository serviceRepository)
         {

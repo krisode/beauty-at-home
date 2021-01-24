@@ -151,14 +151,14 @@ namespace BeautyAtHome.Controllers
                 rtnList = rtnList.Where(s => s.EstimateTime <= serviceModel.LowerTime);
             }
 
-            IQueryable<Service> queryList = null;
+
 
             PagingSupport<Service> pagingList = new PagingSupport<Service>(queryList);
             PagingViewModel<Service> pagingViewModel = pagingList
                 .GetRange(pageIndex, pageSize, s => s.Id)
                 .ToPagingViewModel();
 
-            return Ok(rtnList);
+            return Ok(pagingViewModel);
         }
 
         /// <summary>

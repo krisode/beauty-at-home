@@ -19,7 +19,6 @@ namespace BeautyAtHome.Utils
         ///</summary>
         PagingSupport<T> GetRange(int pageIndex, int pageSize, Expression<Func<T, int>> orderLambda);
 
-        PagingSupport<T> OrderBy(Expression<Func<T, int>> orderLambda);
         PagingViewModel<T> ToPagingViewModel();
 
     }
