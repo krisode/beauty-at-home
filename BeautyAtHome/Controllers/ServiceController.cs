@@ -9,6 +9,7 @@ using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Threading.Tasks;
 
 namespace BeautyAtHome.Controllers
@@ -96,7 +97,7 @@ namespace BeautyAtHome.Controllers
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<ActionResult<IEnumerable<ServiceVM>>> GetService([FromQuery] ServiceSM serviceModel, int pageSize, int pageIndex, bool sort)
         {
-            var rtnList = _service.GetEnumAll();
+            var rtnList = _service.GetEnumAll(s => s.Gallery, s => s.ServiceType);
 
             if (serviceModel.Id.Length != 0)
             {
@@ -151,38 +152,11 @@ namespace BeautyAtHome.Controllers
                 rtnList = rtnList.Where(s => s.EstimateTime <= serviceModel.LowerTime);
             }
 
-
-            
-            int count = rtnList.Count();
-
-            int totalPages = (int)Math.Ceiling(count / (double) pageSize);
-
-            var items = rtnList.Skip((pageIndex - 1) * pageSize).Take(pageSize).ToList();
-
-            var previousPage = pageIndex > 1 ? "Yes" : "No";
-
-            var nextPage = pageIndex < totalPages ? "Yes" : "No";
-
-            var paginationMetadata = new
-            {
-                totalCount = count,
-                pageSize = pageSize,
-                currentPage = pageIndex,
-                totalPages = totalPages,
-                previousPage,
-                nextPage
-            };
-
-            Response.Headers.Add("Paging-Headers", JsonConvert.SerializeObject(paginationMetadata));
-
-            IQueryable<Service> queryList = null;
-
-            PagingSupport<Service> pagingList = new PagingSupport<Service>(queryList);
-            PagingViewModel<Service> pagingViewModel = pagingList
+            Paged<Service> pagedModel = PagingSupport<Service>.Instance(rtnList)
                 .GetRange(pageIndex, pageSize, s => s.Id)
-                .ToPagingViewModel();
+                .Paginate();
 
-            return Ok(rtnList);
+            return Ok(pagedModel);
         }
 
         /// <summary>

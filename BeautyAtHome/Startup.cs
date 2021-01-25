@@ -61,7 +61,6 @@ namespace BeautyAtHome
             services.AddTransient<IAccountService, AccountService>();
 
             services.AddSingleton<IJwtTokenProvider, JwtTokenProvider>();
-            services.AddSingleton(typeof(IPagingSupport<>), typeof(PagingSupport<>));
 
             services
             .AddAuthentication(JwtBearerDefaults.AuthenticationScheme)

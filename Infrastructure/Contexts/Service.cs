@@ -22,13 +22,13 @@ namespace Infrastructure.Contexts
         public decimal Price { get; set; }
         public int EstimateTime { get; set; }
         public int AccountId { get; set; }
-        public int CategoryId { get; set; }
+        public int ServiceTypeId { get; set; }
         public string Status { get; set; }
         public bool IsServiceCombo { get; set; }
         public int GalleryId { get; set; }
 
         public virtual Account Account { get; set; }
-        public virtual ServiceType Category { get; set; }
+        public virtual ServiceType ServiceType { get; set; }
         public virtual Gallery Gallery { get; set; }
         public virtual ICollection<BookingDetail> BookingDetails { get; set; }
         public virtual ICollection<ServiceInCombo> ServiceInComboServiceCombos { get; set; }
