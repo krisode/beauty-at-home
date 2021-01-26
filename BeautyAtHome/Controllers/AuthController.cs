@@ -31,11 +31,11 @@ namespace BeautyAtHome.Controllers
             var auth = FirebaseAdmin.Auth.FirebaseAuth.DefaultInstance;
             try
             {
-                await auth.VerifyIdTokenAsync(authCM.AccessToken);
+                await auth.VerifyIdTokenAsync(authCM.IdToken);
             }
-            catch (Exception)
+            catch (Exception e)
             {
-                return Unauthorized();
+                return Unauthorized(e.Message);
             }
 
             AuthVM response;
@@ -52,7 +52,7 @@ namespace BeautyAtHome.Controllers
                         Role = Constants.Role.ADMIN,
                         Status = Constants.AccountStatus.ACTIVE
                     };
-                    _accountService.Add(accountCreated);
+                    await _accountService.AddAsync(accountCreated);
                     await _accountService.Save();
                 }
                 var uid = accountCreated.Id;

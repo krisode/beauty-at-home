@@ -4,13 +4,13 @@ using Infrastructure.Interfaces.Implements;
 
 namespace Infrastructure.Repositories
 {
-    public interface IServiceRepository : IRepository<Service>
+    public interface IServiceRepository : IRepository<Service, int>
     {
 
     }
-    public class ServiceRepository : Repository<Service>, IServiceRepository
+    public class ServiceRepository : Repository<Service, int>, IServiceRepository
     {
-        public ServiceRepository(IDatabaseFactory databaseFactory) : base(databaseFactory)
+        public ServiceRepository(BeautyServiceProviderContext dbContext) : base(dbContext)
         {
 
         }

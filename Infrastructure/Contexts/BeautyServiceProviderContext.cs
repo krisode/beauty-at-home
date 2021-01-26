@@ -17,6 +17,11 @@ namespace Infrastructure.Contexts
             : base(options)
         {
         }
+        public async Task<bool> Commit()
+        {
+            int result = await base.SaveChangesAsync();
+            return result > 0;
+        }
 
         public virtual DbSet<Account> Accounts { get; set; }
         public virtual DbSet<AccountInSalon> AccountInSalons { get; set; }
@@ -31,16 +36,11 @@ namespace Infrastructure.Contexts
         public virtual DbSet<ServiceInCombo> ServiceInCombos { get; set; }
         public virtual DbSet<ServiceType> ServiceTypes { get; set; }
 
-        public async Task<bool> Commit()
-        {
-            int result = await base.SaveChangesAsync();
-            return result > 0;
-        }
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             if (!optionsBuilder.IsConfigured)
             {
-                optionsBuilder.UseSqlServer("Server=.;Database=BeautyServiceProvider;Trusted_Connection=True");
+                //optionsBuilder.UseSqlServer("Server=.;Database=BeautyServiceProvider;Trusted_Connection=True");
             }
         }
 
@@ -294,17 +294,17 @@ namespace Infrastructure.Contexts
                     .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("FK_Service_Account");
 
-                entity.HasOne(d => d.Category)
-                    .WithMany(p => p.Services)
-                    .HasForeignKey(d => d.CategoryId)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK__Service__Categor__32E0915F");
-
                 entity.HasOne(d => d.Gallery)
                     .WithMany(p => p.Services)
                     .HasForeignKey(d => d.GalleryId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("FK_Service_Gallery");
+
+                entity.HasOne(d => d.ServiceType)
+                    .WithMany(p => p.Services)
+                    .HasForeignKey(d => d.ServiceTypeId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK__Service__Categor__32E0915F");
             });
 
             modelBuilder.Entity<ServiceInCombo>(entity =>

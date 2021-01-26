@@ -4,6 +4,6 @@ namespace Infrastructure.Interfaces
 {
     public interface IUnitOfWork
     {
-        Task<bool> Save();
+        Task<int> Save();
     }
 }

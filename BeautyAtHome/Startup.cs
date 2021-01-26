@@ -18,6 +18,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using Newtonsoft.Json;
 using Swashbuckle.AspNetCore.Filters;
 using System;
 using System.IO;
@@ -47,21 +48,24 @@ namespace BeautyAtHome
             });
 
             services.AddDbContext<BeautyServiceProviderContext>(options =>
-            options.UseSqlServer(Configuration.GetConnectionString("BeautyServiceProviderDatabase")));
+                options.UseSqlServer(Configuration.GetConnectionString("BeautyServiceProviderDatabase")));
 
-            services.AddScoped<IDatabaseFactory, DatabaseFactory>();
+            services.AddScoped(typeof(IRepository<,>), typeof(Repository<,>));
+
+            services.AddScoped(typeof(IPagingSupport<>), typeof(PagingSupport<>));
+
             services.AddTransient<IUnitOfWork, UnitOfWork>();
 
             services.AddSingleton<IAuthorizationPolicyProvider, RequiredRolePolicyProvider>();
             services.AddSingleton<IAuthorizationHandler, RequiredRoleHandler>();
 
-            services.AddTransient(typeof(IRepository<>), typeof(Repository<>));
+            //services.AddTransient<IServiceRepository, ServiceRepository>();
+            //services.AddTransient<IAccountRepository, AccountRepository>();
 
             services.AddTransient<IBeautyServicesService, BeautyServicesService>();
             services.AddTransient<IAccountService, AccountService>();
 
             services.AddSingleton<IJwtTokenProvider, JwtTokenProvider>();
-            services.AddSingleton(typeof(IPagingSupport<>), typeof(PagingSupport<>));
 
             services
             .AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
@@ -77,7 +81,10 @@ namespace BeautyAtHome
                     ValidIssuer = Configuration["jwt:Issuer"],
                 };
             });
-            services.AddControllers();
+            services.AddControllers().AddNewtonsoftJson(options =>
+            {
+                options.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore;
+            });
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "BeautyAtHome", Version = "v1" });

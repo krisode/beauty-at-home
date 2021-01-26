@@ -2,7 +2,7 @@
 {
     public class AuthCM
     {
-        public string AccessToken { get; set; }
+        public string IdToken { get; set; }
         public string Email { get; set; }
         public string DisplayName { get; set; }
     }

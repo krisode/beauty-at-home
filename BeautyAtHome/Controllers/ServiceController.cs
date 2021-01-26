@@ -5,7 +5,6 @@ using BeautyAtHome.ViewModels;
 using Infrastructure.Contexts;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -19,12 +18,16 @@ namespace BeautyAtHome.Controllers
     {
         private readonly IBeautyServicesService _service;
         private readonly IMapper _mapper;
+        private readonly IPagingSupport<Service> _pagingSupport;
 
-        public ServiceController(IBeautyServicesService service, IMapper mapper)
+        public ServiceController(IBeautyServicesService service, IMapper mapper, IPagingSupport<Service> pagingSupport)
         {
             _service = service;
             _mapper = mapper;
+            _pagingSupport = pagingSupport;
         }
+
+
 
         /// <summary>
         /// Get a specific service by service id
@@ -46,10 +49,10 @@ namespace BeautyAtHome.Controllers
         /*[SwaggerResponseExample(StatusCodes.Status200OK, typeof (ApplicationCore.DTOs.Service))]*/
         [ProducesResponseType(StatusCodes.Status404NotFound)]
 
-        public ActionResult<ServiceVM> GetServiceById(int id)
+        public async Task<ActionResult<ServiceVM>> GetServiceById(int id)
         {
 
-            var service = _service.GetById(id);
+            var service = await _service.GetByIdAsync(id);
 
             if (service == null)
             {
@@ -94,95 +97,15 @@ namespace BeautyAtHome.Controllers
         [Produces("application/json")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<ActionResult<IEnumerable<ServiceVM>>> GetService([FromQuery] ServiceSM serviceModel, int pageSize, int pageIndex, bool sort)
+        public async Task<ActionResult<IEnumerable<ServiceVM>>> GetService([FromQuery] ServiceSM serviceModel, int pageSize, int pageIndex)
         {
-            var rtnList = _service.GetEnumAll();
+            var serviceList = _service.GetAll(s => s.ServiceType, s => s.Gallery, s => s.Account);
 
-            if (serviceModel.Id.Length != 0)
-            {
-                for (int i = 0; i < serviceModel.Id.Length; i++)
-                {
-                    rtnList.Where(s => s.Id == serviceModel.Id[i]);
-                }
-            }
-
-            if (!string.IsNullOrEmpty(serviceModel.ServiceName))
-            {
-                rtnList = rtnList.Where(s => s.ServiceName.Contains(serviceModel.ServiceName));
-            }
-
-            if (serviceModel.CreatedAtMin != null)
-            {
-                rtnList = rtnList.Where(s => s.CreatedDate >= serviceModel.CreatedAtMin);
-            }
-
-            if (serviceModel.CreatedAtMax != null)
-            {
-                rtnList = rtnList.Where(s => s.CreatedDate <= serviceModel.CreatedAtMax);
-            }
-
-            if (serviceModel.UpdatedAtMin != null)
-            {
-                rtnList = rtnList.Where(s => s.UpdatedDate >= serviceModel.UpdatedAtMin);
-            }
-
-            if (serviceModel.UpdatedAtMax != null)
-            {
-                rtnList = rtnList.Where(s => s.UpdatedDate <= serviceModel.UpdatedAtMax);
-            }
-
-            if (serviceModel.LowerPrice > 0)
-            {
-                rtnList = rtnList.Where(s => s.Price >= serviceModel.LowerPrice);
-            }
-
-            if (serviceModel.UpperPrice > 0)
-            {
-                rtnList = rtnList.Where(s => s.Price <= serviceModel.UpperPrice);
-            }
-
-            if (serviceModel.LowerTime > 0)
-            {
-                rtnList = rtnList.Where(s => s.EstimateTime >= serviceModel.LowerTime);
-            }
-
-            if (serviceModel.UpperTime > 0)
-            {
-                rtnList = rtnList.Where(s => s.EstimateTime <= serviceModel.LowerTime);
-            }
-
-
-            
-            int count = rtnList.Count();
-
-            int totalPages = (int)Math.Ceiling(count / (double) pageSize);
-
-            var items = rtnList.Skip((pageIndex - 1) * pageSize).Take(pageSize).ToList();
-
-            var previousPage = pageIndex > 1 ? "Yes" : "No";
-
-            var nextPage = pageIndex < totalPages ? "Yes" : "No";
-
-            var paginationMetadata = new
-            {
-                totalCount = count,
-                pageSize = pageSize,
-                currentPage = pageIndex,
-                totalPages = totalPages,
-                previousPage,
-                nextPage
-            };
-
-            Response.Headers.Add("Paging-Headers", JsonConvert.SerializeObject(paginationMetadata));
-
-            IQueryable<Service> queryList = null;
-
-            PagingSupport<Service> pagingList = new PagingSupport<Service>(queryList);
-            PagingViewModel<Service> pagingViewModel = pagingList
+            var pagedModel = _pagingSupport.From(serviceList)
                 .GetRange(pageIndex, pageSize, s => s.Id)
-                .ToPagingViewModel();
+                .Paginate<ServicePagingSM>();
 
-            return Ok(rtnList);
+            return Ok(pagedModel);
         }
 
         /// <summary>
@@ -207,8 +130,7 @@ namespace BeautyAtHome.Controllers
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<ActionResult<int>> CountAll()
         {
-            var lst = _service.GetEnumAll().Count();
-            await _service.Save();
+            var lst = _service.GetAll().Count();
             return Ok(lst);
         }
 
@@ -257,11 +179,11 @@ namespace BeautyAtHome.Controllers
                 crtService.UpdatedDate = updDate;
                 crtService.Status = status;
 
-                _service.Add(crtService);
+                await _service.AddAsync(crtService);
                 await _service.Save();
                 
             }
-            catch (Exception)
+            catch (Exception e)
             {
                 return StatusCode(StatusCodes.Status500InternalServerError);
             }
@@ -285,17 +207,16 @@ namespace BeautyAtHome.Controllers
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<ActionResult> PutService(int id, [FromBody] ServiceUM service)
         {
-            if (_service.GetById(id) == null || id != service.Id)
+            Service serviceSaved = await _service.GetByIdAsync(id);
+            if (serviceSaved == null || id != service.Id)
             {
                 return BadRequest();
             }
 
-            DateTime updDate = DateTime.Now;
-            var updService = _mapper.Map<Service>(service);
-            updService.UpdatedDate = updDate;
+            serviceSaved.UpdatedDate = DateTime.Now;
             try
             {
-                _service.Update(updService);
+                _service.Update(serviceSaved);
                 await _service.Save();
                 
             }
@@ -322,21 +243,18 @@ namespace BeautyAtHome.Controllers
         [Produces("application/json")]
         public async Task<ActionResult> DeleteService(int id)
         {
-            if (_service.GetById(id) == null)
+            Service serviceSaved = await _service.GetByIdAsync(id);
+            if (serviceSaved == null)
             {
                 return BadRequest();
             }
 
-            DateTime updTime = DateTime.Now;
-            string status = Constants.Status.DISABLED;
-
-            var dltService = _service.GetById(id);
-            dltService.UpdatedDate = updTime;
-            dltService.Status = status;
+            serviceSaved.UpdatedDate = DateTime.Now;
+            serviceSaved.Status = Constants.Status.DISABLED;
 
             try
             {
-                _service.Update(dltService);
+                _service.Update(serviceSaved);
                 await _service.Save(); 
             }
             catch (Exception)

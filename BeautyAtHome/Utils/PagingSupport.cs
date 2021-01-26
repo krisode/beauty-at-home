@@ -1,13 +1,12 @@
 ﻿using System;
-using System.Collections;
-using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
-using System.Threading.Tasks;
+using System.Collections.Generic;
+using AutoMapper;
 
 namespace BeautyAtHome.Utils
 {
-    public interface IPagingSupport<T> : IEnumerable<T>
+    public interface IPagingSupport<T>
     {
         ///<summary>
         /// Get the total entity count.
@@ -15,34 +14,39 @@ namespace BeautyAtHome.Utils
         int Count { get; }
 
         ///<summary>
+        /// Add query source.
+        ///</summary>
+        PagingSupport<T> From(IQueryable<T> source);
+
+        ///<summary>
         /// Get a range of persited entities.
         ///</summary>
-        PagingSupport<T> GetRange(int pageIndex, int pageSize, Expression<Func<T, int>> orderLambda);
+        PagingSupport<T> GetRange(int pageIndex, int pageSize, Expression<Func<T, object>> selector);
 
-        PagingSupport<T> OrderBy(Expression<Func<T, int>> orderLambda);
-        PagingViewModel<T> ToPagingViewModel();
 
+
+        ///<summary>
+        /// Get paginated result.
+        ///</summary>
+        Paged<TResult> Paginate<TResult>();
     }
 
     public class PagingSupport<T> : IPagingSupport<T>
     {
+        private readonly IMapper _mapper;
         private IQueryable<T> _source;
         private int _pageIndex;
         private int _pageSize;
 
-        public PagingSupport(IQueryable<T> source)
+        public PagingSupport(IMapper mapper)
+        {
+            _mapper = mapper;
+        }
+
+        public PagingSupport<T> From(IQueryable<T> source)
         {
             this._source = source;
-        }
-
-        public IEnumerator<T> GetEnumerator()
-        {
-            return _source.GetEnumerator();
-        }
-
-        IEnumerator IEnumerable.GetEnumerator()
-        {
-            return GetEnumerator();
+            return this;
         }
 
         public int Count
@@ -50,25 +54,24 @@ namespace BeautyAtHome.Utils
             get { return _source.Count(); }
         }
 
-
-        public PagingSupport<T> GetRange(int pageIndex, int pageSize, Expression<Func<T, int>> orderLambda)
+        public PagingSupport<T> GetRange(int pageIndex, int pageSize, Expression<Func<T, object>> selector)
         {
             _pageIndex = pageIndex;
             _pageSize = pageSize;
-            _source = _source.OrderBy(orderLambda).Skip((pageIndex - 1) * pageSize).Take(pageSize);
+            _source = _source.OrderBy(selector).Skip((pageIndex - 1) * pageSize).Take(pageSize);
             return this;
         }
 
-        public PagingViewModel<T> ToPagingViewModel()
+        public Paged<TResult> Paginate<TResult>()
         {
             int count = Count;
-            var pagingVM = new PagingViewModel<T>()
+            var pagingVM = new Paged<TResult>()
             {
                 TotalCount = Count,
                 PageSize = _pageSize,
                 TotalPage = (int)Math.Ceiling((double)Count / _pageSize),
                 CurrentPage = _pageIndex,
-                Content = _source
+                Content = _source.Select(t => _mapper.Map<TResult>(t))
             };
             if (_pageIndex > 1)
             {
@@ -82,9 +85,10 @@ namespace BeautyAtHome.Utils
 
             return pagingVM;
         }
+
     }
 
-    public class PagingViewModel<T>
+    public class Paged<T>
     {
         public int TotalCount { get; set; }
         public int PageSize { get; set; }
@@ -92,6 +96,6 @@ namespace BeautyAtHome.Utils
         public int CurrentPage { get; set; }
         public int? NextPage { get; set; }
         public int? PreviousPage { get; set; }
-        public IEnumerable<T> Content { get; set; }
+        public IQueryable<T> Content { get; set; }
     }
 }
