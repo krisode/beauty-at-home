@@ -7,13 +7,13 @@ using System.Text;
 
 namespace Infrastructure.Repositories
 {
-    public interface IAccountRepository : IRepository<Account>
+    public interface IAccountRepository : IRepository<Account, int>
     {
     }
 
-    public class AccountRepository : Repository<Account>, IAccountRepository
+    public class AccountRepository : Repository<Account, int>, IAccountRepository
     {
-        public AccountRepository(IDatabaseFactory databaseFactory) : base(databaseFactory)
+        public AccountRepository(BeautyServiceProviderContext dbContext) : base(dbContext)
         {
         }
     }

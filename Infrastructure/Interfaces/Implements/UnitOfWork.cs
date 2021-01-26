@@ -6,26 +6,16 @@ namespace Infrastructure.Interfaces.Implements
 {
     public class UnitOfWork : IUnitOfWork
     {
-        private readonly IDatabaseFactory _dbFactory;
+        private readonly BeautyServiceProviderContext _context;
 
-        private BeautyServiceProviderContext _context;
-
-        public UnitOfWork(IDatabaseFactory databaseFactory) 
+        public UnitOfWork(BeautyServiceProviderContext context)
         {
-            _dbFactory = databaseFactory;
+            _context = context;
         }
 
-        private BeautyServiceProviderContext BeautyServiceProviderContext
+        public async Task<int> Save()
         {
-            get
-            {
-                return _context ?? (_context = _dbFactory.Init());
-            }
-        }
-
-        public async Task<bool> Save()
-        {
-            return await BeautyServiceProviderContext.Commit();
+            return await _context.SaveChangesAsync();
         }
     }
 }

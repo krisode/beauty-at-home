@@ -8,49 +8,53 @@ using System.Threading.Tasks;
 
 namespace ApplicationCore.Services
 {
-    public interface IAccountService : IBaseService<Account>
+    public interface IAccountService : IService<Account, int>
     {
         Account GetByEmail(string email);
     }
     public class AccountService : IAccountService
     {
         private readonly IUnitOfWork _iUnitOfWork;
-        private readonly IAccountRepository _iRepository;
+        private readonly IRepository<Account, int> _iRepository;
 
-        public AccountService(IUnitOfWork iUnitOfWork, IAccountRepository iRepository)
+        public AccountService(IUnitOfWork iUnitOfWork, IRepository<Account, int> iRepository)
         {
             _iUnitOfWork = iUnitOfWork;
             _iRepository = iRepository;
         }
 
-        public void Add(Account entity)
+        public async Task<Account> AddAsync(Account entity)
         {
-            _iRepository.Add(entity);
+            return await _iRepository.AddAsync(entity);
         }
 
-        public void Delete(Expression<Func<Account, bool>> where)
+        public void Delete(Account entity)
         {
-            _iRepository.Delete(where);
+            _iRepository.Delete(entity);
         }
 
-        public Account GetByEmail(string email)
+        public async Task<Account> GetByIdAsync(int id)
         {
-            var accountQueryList = _iRepository.GetQueryList(acc => acc.Email == email);
-            return accountQueryList.Any() ? accountQueryList.First() : null;
-        }
-
-        public Account GetById(int id)
-        {
-            return _iRepository.GetById(id);
+            return await _iRepository.GetByIdAsync(id);
         }
 
         public void Update(Account entity)
         {
             _iRepository.Update(entity);
         }
-        public async Task<bool> Save()
+        public async Task<int> Save()
         {
             return await _iUnitOfWork.Save();
+        }
+
+        public Account GetByEmail(string email)
+        {
+            return _iRepository.GetAll().Where(a => a.Email == email).FirstOrDefault();
+        }
+
+        public IQueryable<Account> GetAll(params Expression<Func<Account, object>>[] includes)
+        {
+            return _iRepository.GetAll(includes);
         }
     }
 }

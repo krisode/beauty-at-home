@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Infrastructure.Contexts;
+using System;
 using System.ComponentModel.DataAnnotations;
 
 namespace BeautyAtHome.ViewModels
@@ -10,12 +11,11 @@ namespace BeautyAtHome.ViewModels
         public decimal Price { get; set; }
         public int EstimateTime { get; set; }
         [Required]
-        public int AccountId { get; set; }
+        public int? AccountId { get; set; }
         [Required]
-        public int CategoryId { get; set; }
+        public int ServiceTypeId { get; set; }
         public bool IsServiceCombo { get; set; }
-        [Required]
-        public int GalleryId { get; set; }
+        public int? GalleryId { get; set; }
     }
     public class ServiceVM
     {
@@ -49,14 +49,11 @@ namespace BeautyAtHome.ViewModels
         public decimal UpperPrice { get; set; }
         public int LowerTime { get; set; }
         public int UpperTime { get; set; }
-        [Required]
-        public int AccountId { get; set; }
-        [Required]
+        public int? AccountId { get; set; }
         public int CategoryId { get; set; }
         public string Status { get; set; }
         public bool IsServiceCombo { get; set; }
-        [Required]
-        public int GalleryId { get; set; }
+        public int? GalleryId { get; set; }
         public int PageSize { get; set; }
         public int PageIndex { get; set; }
 
@@ -76,4 +73,29 @@ namespace BeautyAtHome.ViewModels
         public long GalleryId { get; set; }
     }
 
+    public class ServicePagingSM
+    {
+        public int Id { get; set; }
+        public string ServiceName { get; set; }
+        public AccountPagingSM Account { get; set; }
+        public GalleryPagingSM Gallery { get; set; }
+        public ServiceTypePagingSM ServiceType { get; set; }
+    }
+    public class ServiceTypePagingSM
+    {
+        public int Id { get; set; }
+        public string Name { get; set; }
+    }
+
+    public class AccountPagingSM
+    {
+        public int Id { get; set; }
+        public string DisplayName { get; set; }
+    }
+
+    public class GalleryPagingSM
+    {
+        public int Id { get; set; }
+        public string Name { get; set; }
+    }
 }
