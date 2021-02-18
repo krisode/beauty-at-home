@@ -128,10 +128,10 @@ namespace BeautyAtHome.Controllers
         [Produces("application/json")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<ActionResult<int>> CountAll()
+        public async Task<ActionResult<int>> CountAll([FromQuery] ServiceSM serviceModel)
         {
-            var lst = _service.GetAll().Count();
-            return Ok(lst);
+            var serviceList = _service.GetAll(s => s.ServiceType, s => s.Gallery, s => s.Account).Count();
+            return Ok(serviceList);
         }
 
         /// <summary>
