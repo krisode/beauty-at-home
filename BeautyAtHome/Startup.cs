@@ -1,9 +1,15 @@
 using ApplicationCore.Services;
+using AutoMapper;
+using BeautyAtHome.Authorization;
+using BeautyAtHome.Utils;
+using FirebaseAdmin;
+using Google.Apis.Auth.OAuth2;
 using Infrastructure.Contexts;
 using Infrastructure.Interfaces;
 using Infrastructure.Interfaces.Implements;
 using Infrastructure.Repositories;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
@@ -12,10 +18,12 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using Newtonsoft.Json;
 using Swashbuckle.AspNetCore.Filters;
 using System;
 using System.IO;
 using System.Reflection;
+using System.Text;
 
 namespace BeautyAtHome
 {
@@ -31,30 +39,52 @@ namespace BeautyAtHome
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddDbContext<BeautyServiceProviderContext>(options =>
-            options.UseSqlServer(Configuration.GetConnectionString("BeautyServiceProviderDatabase")));
+            services.AddAutoMapper(typeof(Startup));
 
-            services.AddScoped<IDatabaseFactory, DatabaseFactory>();
+            var pathToKey = Path.Combine(Directory.GetCurrentDirectory(), "Keys", "firebase_admin_sdk.json");
+            FirebaseApp.Create(new AppOptions
+            {
+                Credential = GoogleCredential.FromFile(pathToKey)
+            });
+
+            services.AddDbContext<BeautyServiceProviderContext>(options =>
+                options.UseSqlServer(Configuration.GetConnectionString("BeautyServiceProviderDatabase")));
+
+            services.AddScoped(typeof(IRepository<,>), typeof(Repository<,>));
+
+            services.AddScoped(typeof(IPagingSupport<>), typeof(PagingSupport<>));
+
             services.AddTransient<IUnitOfWork, UnitOfWork>();
 
-            services.AddTransient<IServiceRepository, ServiceRepository>();
+            services.AddSingleton<IAuthorizationPolicyProvider, RequiredRolePolicyProvider>();
+            services.AddSingleton<IAuthorizationHandler, RequiredRoleHandler>();
+
+            //services.AddTransient<IServiceRepository, ServiceRepository>();
+            //services.AddTransient<IAccountRepository, AccountRepository>();
+
             services.AddTransient<IBeautyServicesService, BeautyServicesService>();
+            services.AddTransient<IAccountService, AccountService>();
+
+            services.AddSingleton<IJwtTokenProvider, JwtTokenProvider>();
 
             services
             .AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             .AddJwtBearer(options =>
             {
-                options.Authority = "https://securetoken.google.com/testauthentication-a4c25";
                 options.TokenValidationParameters = new TokenValidationParameters
                 {
+                    ValidateIssuerSigningKey = true,
                     ValidateIssuer = true,
-                    ValidIssuer = "https://securetoken.google.com/testauthentication-a4c25",
                     ValidateAudience = true,
-                    ValidAudience = "testauthentication-a4c25",
-                    ValidateLifetime = true
+                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(Configuration["jwt:Key"])),
+                    ValidAudience = Configuration["jwt:Audience"],
+                    ValidIssuer = Configuration["jwt:Issuer"],
                 };
             });
-            services.AddControllers();
+            services.AddControllers().AddNewtonsoftJson(options =>
+            {
+                options.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore;
+            });
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "BeautyAtHome", Version = "v1" });

@@ -1,76 +1,56 @@
 ﻿using Infrastructure.Interfaces;
 using Infrastructure.Contexts;
 using Infrastructure.Repositories;
-using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Linq.Expressions;
 using System.Threading.Tasks;
+using System.Linq.Expressions;
+using System;
 
 namespace ApplicationCore.Services
 {
-    public interface IBeautyServicesService : IService<Service>
+    public interface IBeautyServicesService : IService<Service, int>
     {
 
     }
     public class BeautyServicesService : IBeautyServicesService
     {
         private readonly IUnitOfWork _iUnitOfWork;
-        private readonly IServiceRepository _iRepository;
+        private readonly IRepository<Service, int> _iRepository;
 
-        public BeautyServicesService(IUnitOfWork unitOfWork, IServiceRepository serviceRepository)
+        public BeautyServicesService(IUnitOfWork unitOfWork, IRepository<Service, int> iRepository)
         {
             _iUnitOfWork = unitOfWork;
-            _iRepository = serviceRepository;
-        }
-        public void Add(Service service)
-        {
-            _iRepository.Add(service);
+            _iRepository = iRepository;
         }
 
-        public Service GetById(int Id)
+        public async Task<Service> AddAsync(Service entity)
         {
-            return _iRepository.GetById(Id);
+            return await _iRepository.AddAsync(entity);
+        }
+
+        public void Delete(Service entity)
+        {
+            _iRepository.Delete(entity);
+        }
+
+        public IQueryable<Service> GetAll(params Expression<Func<Service, object>>[] includes)
+        {
+            return _iRepository.GetAll(includes);
+        }
+
+        public async Task<Service> GetByIdAsync(int id)
+        {
+            return await _iRepository.GetByIdAsync(id);
+        }
+
+        public async Task<int> Save()
+        {
+            return await _iUnitOfWork.Save();
         }
 
         public void Update(Service entity)
         {
             _iRepository.Update(entity);
-        }
-
-        public void Delete(Expression<Func<Service, bool>> where)
-        {
-            _iRepository.Delete(where);
-        }
-
-        public IEnumerable<Service> GetAll()
-        {
-            return _iRepository.GetAll();
-        }
-
-        public IEnumerable<Service> GetAll(params Expression<Func<Service, object>>[] includes)
-        {
-            return _iRepository.GetAll(includes);
-        }
-
-        public IEnumerable<Service> GetList(Expression<Func<Service, bool>> where)
-        {
-            return _iRepository.GetList(where);
-        }
-
-        public IQueryable<Service> _GetList(Expression<Func<Service, bool>> where)
-        {
-            return _iRepository._GetList(where);
-        }
-
-        public IQueryable<Service> _GetList(Expression<Func<Service, bool>> where, params Expression<Func<Service, object>>[] includes)
-        {
-            return _iRepository._GetList(where, includes);
-        }
-
-        public async Task<bool> Save()
-        {
-            return await _iUnitOfWork.Save();
         }
     }
 }

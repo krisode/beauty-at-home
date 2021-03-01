@@ -9,24 +9,31 @@ namespace Infrastructure.Contexts
     {
         public Account()
         {
+            AccountInSalonMembers = new HashSet<AccountInSalon>();
+            AccountInSalonSalonOwners = new HashSet<AccountInSalon>();
             Addresses = new HashSet<Address>();
             BookingCustomerAccounts = new HashSet<Booking>();
             BookingSalonMemberAccounts = new HashSet<Booking>();
+            Services = new HashSet<Service>();
         }
 
         public string Email { get; set; }
-        public long Id { get; set; }
-        public string Name { get; set; }
+        public int Id { get; set; }
+        public string DisplayName { get; set; }
         public string Phone { get; set; }
         public string Role { get; set; }
         public string Status { get; set; }
-        public long SalonId { get; set; }
-        public long? GalleryId { get; set; }
+        public int? GalleryId { get; set; }
+        public bool IsSalonOwner { get; set; }
+        public int? DefaultAddressId { get; set; }
 
+        public virtual Address DefaultAddress { get; set; }
         public virtual Gallery Gallery { get; set; }
-        public virtual Salon Salon { get; set; }
+        public virtual ICollection<AccountInSalon> AccountInSalonMembers { get; set; }
+        public virtual ICollection<AccountInSalon> AccountInSalonSalonOwners { get; set; }
         public virtual ICollection<Address> Addresses { get; set; }
         public virtual ICollection<Booking> BookingCustomerAccounts { get; set; }
         public virtual ICollection<Booking> BookingSalonMemberAccounts { get; set; }
+        public virtual ICollection<Service> Services { get; set; }
     }
 }
