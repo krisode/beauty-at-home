@@ -18,11 +18,11 @@ namespace Infrastructure.Contexts
         public string Description { get; set; }
         public string ServiceName { get; set; }
         public DateTime CreatedDate { get; set; }
-        public DateTime?     UpdatedDate { get; set; }
+        public DateTime? UpdatedDate { get; set; }
         public decimal Price { get; set; }
         public int EstimateTime { get; set; }
         public int AccountId { get; set; }
-        public int? ServiceTypeId { get; set; }
+        public int ServiceTypeId { get; set; }
         public string Status { get; set; }
         public bool IsServiceCombo { get; set; }
         public int? GalleryId { get; set; }
