@@ -1,4 +1,5 @@
 ﻿using ApplicationCore.Services;
+using BeautyAtHome.ExternalService;
 using BeautyAtHome.Utils;
 using BeautyAtHome.ViewModels;
 using Infrastructure.Contexts;
@@ -16,11 +17,29 @@ namespace BeautyAtHome.Controllers
     {
         private readonly IAccountService _accountService;
         private readonly IJwtTokenProvider _jwtTokenProvider;
+        private readonly IUploadFileService _uploadFileService; 
 
-        public AuthController(IAccountService accountService, IJwtTokenProvider jwtTokenProvider)
+        public AuthController(IAccountService accountService, IJwtTokenProvider jwtTokenProvider, IUploadFileService uploadFileService)
         {
             _accountService = accountService;
             _jwtTokenProvider = jwtTokenProvider;
+            _uploadFileService = uploadFileService;
+        }
+
+        [HttpPost("upload-image-flutter")]
+        [Produces("application/json")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public async Task<ActionResult> uploadImageToFlutter([FromForm] IFormFile file)
+        {
+            try
+            {
+                string fileUrl = await _uploadFileService.UploadFile(file);
+                return Ok(fileUrl);
+            }
+            catch (Exception e)
+            {
+                return Ok(e.Message);
+            }
         }
 
         [HttpPost("login")]
