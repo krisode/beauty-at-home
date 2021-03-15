@@ -40,7 +40,7 @@ namespace Infrastructure.Contexts
         {
             if (!optionsBuilder.IsConfigured)
             {
-                //optionsBuilder.UseSqlServer("Server=.;Database=BeautyServiceProvider;Trusted_Connection=True");
+                //optionsBuilder.UseSqlServer("Server=huyttdserver.database.windows.net;Database=beautyathome;User Id=huyttd;Password=14062000Danghuy;Trusted_Connection=False;Encrypt=True;");
             }
         }
 
