@@ -9,11 +9,9 @@ namespace Infrastructure.Contexts
     {
         public Account()
         {
-            AccountInSalonMembers = new HashSet<AccountInSalon>();
-            AccountInSalonSalonOwners = new HashSet<AccountInSalon>();
             Addresses = new HashSet<Address>();
+            BookingBeautyArtistAccounts = new HashSet<Booking>();
             BookingCustomerAccounts = new HashSet<Booking>();
-            BookingSalonMemberAccounts = new HashSet<Booking>();
             Services = new HashSet<Service>();
         }
 
@@ -24,16 +22,14 @@ namespace Infrastructure.Contexts
         public string Role { get; set; }
         public string Status { get; set; }
         public int? GalleryId { get; set; }
-        public bool IsSalonOwner { get; set; }
         public int? DefaultAddressId { get; set; }
+        public bool? IsBeautyArtist { get; set; }
 
         public virtual Address DefaultAddress { get; set; }
         public virtual Gallery Gallery { get; set; }
-        public virtual ICollection<AccountInSalon> AccountInSalonMembers { get; set; }
-        public virtual ICollection<AccountInSalon> AccountInSalonSalonOwners { get; set; }
         public virtual ICollection<Address> Addresses { get; set; }
+        public virtual ICollection<Booking> BookingBeautyArtistAccounts { get; set; }
         public virtual ICollection<Booking> BookingCustomerAccounts { get; set; }
-        public virtual ICollection<Booking> BookingSalonMemberAccounts { get; set; }
         public virtual ICollection<Service> Services { get; set; }
     }
 }
