@@ -17,7 +17,7 @@ namespace BeautyAtHome.Controllers
     {
         private readonly IAccountService _accountService;
         private readonly IJwtTokenProvider _jwtTokenProvider;
-        private readonly IUploadFileService _uploadFileService; 
+        private readonly IUploadFileService _uploadFileService;
 
         public AuthController(IAccountService accountService, IJwtTokenProvider jwtTokenProvider, IUploadFileService uploadFileService)
         {
@@ -33,7 +33,8 @@ namespace BeautyAtHome.Controllers
         {
             try
             {
-                string fileUrl = await _uploadFileService.UploadFile(file);
+                string token = Request.Headers["Authorization"];
+                string fileUrl = await _uploadFileService.UploadFile(file, token, "service", "service-detail");
                 return Ok(fileUrl);
             }
             catch (Exception e)
