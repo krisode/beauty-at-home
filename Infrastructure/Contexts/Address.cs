@@ -18,6 +18,8 @@ namespace Infrastructure.Contexts
         public int Latitude { get; set; }
         public int Longtitude { get; set; }
         public int AccountId { get; set; }
+        public string Note { get; set; }
+        public string LocationName { get; set; }
 
         public virtual Account Account { get; set; }
         public virtual ICollection<Account> Accounts { get; set; }

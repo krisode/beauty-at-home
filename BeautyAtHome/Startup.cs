@@ -1,6 +1,7 @@
 using ApplicationCore.Services;
 using AutoMapper;
 using BeautyAtHome.Authorization;
+using BeautyAtHome.ExternalService;
 using BeautyAtHome.Utils;
 using FirebaseAdmin;
 using Google.Apis.Auth.OAuth2;
@@ -58,6 +59,7 @@ namespace BeautyAtHome
 
             services.AddSingleton<IAuthorizationPolicyProvider, RequiredRolePolicyProvider>();
             services.AddSingleton<IAuthorizationHandler, RequiredRoleHandler>();
+            services.AddSingleton<IUploadFileService, UploadFileService>();
 
             //services.AddTransient<IServiceRepository, ServiceRepository>();
             //services.AddTransient<IAccountRepository, AccountRepository>();

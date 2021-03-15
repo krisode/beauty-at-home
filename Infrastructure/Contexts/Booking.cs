@@ -9,9 +9,7 @@ namespace Infrastructure.Contexts
     {
         public Booking()
         {
-            BookingActivities = new HashSet<BookingActivity>();
             BookingDetails = new HashSet<BookingDetail>();
-            FeedBacks = new HashSet<FeedBack>();
         }
 
         public string BookingType { get; set; }
@@ -19,21 +17,20 @@ namespace Infrastructure.Contexts
         public int Id { get; set; }
         public DateTime CreateDate { get; set; }
         public int CustomerAccountId { get; set; }
-        public int SalonMemberAccountId { get; set; }
-        public int SalonOwnerAccountId { get; set; }
+        public int BeautyArtistAccountId { get; set; }
         public string Note { get; set; }
-        public int AddressId { get; set; }
+        public int EndAddressId { get; set; }
         public DateTime? UpdateDate { get; set; }
-        public string FeedbackContent { get; set; }
         public double? RateScore { get; set; }
         public int? GalleryId { get; set; }
+        public int? BeginAddressId { get; set; }
+        public double? TotalFee { get; set; }
+        public double? TransportFee { get; set; }
 
-        public virtual Address Address { get; set; }
+        public virtual Account BeautyArtistAccount { get; set; }
         public virtual Account CustomerAccount { get; set; }
+        public virtual Address EndAddress { get; set; }
         public virtual Gallery Gallery { get; set; }
-        public virtual Account SalonMemberAccount { get; set; }
-        public virtual ICollection<BookingActivity> BookingActivities { get; set; }
         public virtual ICollection<BookingDetail> BookingDetails { get; set; }
-        public virtual ICollection<FeedBack> FeedBacks { get; set; }
     }
 }
