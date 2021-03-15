@@ -33,9 +33,9 @@
 
         public static class Status
         {
-            public const string ENABLED = "ENABLED";
+            public const string ACTIVE = "Active";
 
-            public const string DISABLED = "DISABLED";
+            public const string DISABLED = "Disabled";
         }
     }
 }

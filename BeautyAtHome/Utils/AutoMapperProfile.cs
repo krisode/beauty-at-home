@@ -12,9 +12,9 @@ namespace BeautyAtHome.Utils
             CreateMap<ServiceCM, Service>();
             CreateMap<Service, ServiceVM>();
             CreateMap<Service, ServicePagingSM>();
+            CreateMap<ServicePagingSM, Service>();
             CreateMap<ServiceVM, Service>();
             CreateMap<ServiceCM, Service>();
-            CreateMap<ServiceUM, Service>();
             #endregion
 
             #region AutoMapper AccountViewModel
