@@ -21,9 +21,10 @@ namespace BeautyAtHome.Controllers
         private readonly IMapper _mapper;
         private readonly IPagingSupport<Image> _pagingSupport;
 
-        public ImageController(IImageService service, IMapper mapper, IPagingSupport<Image> pagingSupport)
+        public ImageController(IImageService service, IGalleryService galleryService, IMapper mapper, IPagingSupport<Image> pagingSupport)
         {
             _service = service;
+            _galleryService = galleryService;
             _mapper = mapper;
             _pagingSupport = pagingSupport;
         }
@@ -46,7 +47,7 @@ namespace BeautyAtHome.Controllers
         [Produces("application/json")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<ActionResult<ImageVM>> GetImageById(int id)
+        public ActionResult<ImageVM> GetImageById(int id)
         {
             IQueryable<Image> imageList = _service.GetAll(s => s.Gallery);
             Image imageSearch = imageList.FirstOrDefault(s => s.Id == id);
@@ -82,7 +83,7 @@ namespace BeautyAtHome.Controllers
         [Produces("application/json")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<ActionResult<IEnumerable<ImageVM>>> GetAllGallery([FromQuery] ImageSM model, int pageSize, int pageIndex)
+        public ActionResult<IEnumerable<ImageVM>> GetAllGallery([FromQuery] ImageSM model, int pageSize, int pageIndex)
         {
             IQueryable<Image> imageList = _service.GetAll(s => s.Gallery);
 
