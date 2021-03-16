@@ -37,6 +37,8 @@ namespace BeautyAtHome.Utils
 
             #region AutoMapper ServiceTypeViewModel
             CreateMap<ServiceType, ServiceTypePagingSM>();
+            CreateMap<ServiceTypeCM, ServiceType>();
+            CreateMap<ServiceType, ServiceTypeVM>();
             #endregion
 
             #region
