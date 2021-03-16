@@ -141,10 +141,10 @@ namespace BeautyAtHome.Controllers
                 serviceList = serviceList.Where(s => s.Status.Equals("Active"));
             }
 
-            if (model.IsServiceCombo == true)
+            /*if (model.IsServiceCombo == true)
             {
                 serviceList = serviceList.Where(s => s.IsServiceCombo == true);
-            }
+            }*/
 
             if (pageSize == 0)
             {

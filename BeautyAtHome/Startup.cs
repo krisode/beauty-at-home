@@ -66,6 +66,10 @@ namespace BeautyAtHome
 
             services.AddTransient<IBeautyServicesService, BeautyServicesService>();
             services.AddTransient<IAccountService, AccountService>();
+            services.AddTransient<IFeedBackService, FeedBackService>();
+            services.AddTransient<IBookingService, BookingService>();
+            services.AddTransient<IBookingDetailService, BookingDetailService>();
+            
 
             services.AddSingleton<IJwtTokenProvider, JwtTokenProvider>();
 
