@@ -69,6 +69,7 @@ namespace BeautyAtHome
             services.AddTransient<IBeautyServicesService, BeautyServicesService>();
             services.AddTransient<IAccountService, AccountService>();
             services.AddTransient<IGalleryService, GalleryService>();
+            services.AddTransient<IImageService, ImageService>();
 
             
 
