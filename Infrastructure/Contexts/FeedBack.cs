@@ -8,7 +8,7 @@ namespace Infrastructure.Contexts
     public partial class FeedBack
     {
         public int Id { get; set; }
-        public int RateScore { get; set; }
+        public double RateScore { get; set; }
         public int BookingDetailId { get; set; }
         public int GalleryId { get; set; }
         public string FeedbackContent { get; set; }
