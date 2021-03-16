@@ -10,9 +10,7 @@ namespace BeautyAtHome.ViewModels
         public string ServiceName { get; set; }
         public decimal Price { get; set; }
         public int EstimateTime { get; set; }
-        [Required]
         public int? AccountId { get; set; }
-        [Required]
         public int ServiceTypeId { get; set; }
         public bool IsServiceCombo { get; set; }
         public int? GalleryId { get; set; }
@@ -39,8 +37,8 @@ namespace BeautyAtHome.ViewModels
 
     public class ServiceSM
     {
-        public int[] Id { get; set; }
         public string ServiceName { get; set; }
+        public string Description { get; set; }
         public DateTime? CreatedAtMin { get; set; }
         public DateTime? CreatedAtMax { get; set; }
         public DateTime? UpdatedAtMin { get; set; }
@@ -51,11 +49,9 @@ namespace BeautyAtHome.ViewModels
         public int UpperTime { get; set; }
         public int? AccountId { get; set; }
         public int CategoryId { get; set; }
-        public string Status { get; set; }
+        public bool Status { get; set; }
         public bool IsServiceCombo { get; set; }
         public int? GalleryId { get; set; }
-        public int PageSize { get; set; }
-        public int PageIndex { get; set; }
 
     }
 
@@ -68,7 +64,8 @@ namespace BeautyAtHome.ViewModels
         public decimal Price { get; set; }
         public int EstimateTime { get; set; }
         public long AccountId { get; set; }
-        public long CategoryId { get; set; }
+        public long ServiceTypeId { get; set; }
+        public string Status { get; set; }
         public bool IsServiceCombo { get; set; }
         public long GalleryId { get; set; }
     }
@@ -76,7 +73,12 @@ namespace BeautyAtHome.ViewModels
     public class ServicePagingSM
     {
         public int Id { get; set; }
+        public string Description { get; set; }
         public string ServiceName { get; set; }
+        public decimal Price { get; set; }
+        public int EstimateTime { get; set; }
+        public DateTime CreatedDate { get; set; }
+        public DateTime UpdatedDate { get; set; }
         public AccountPagingSM Account { get; set; }
         public GalleryPagingSM Gallery { get; set; }
         public ServiceTypePagingSM ServiceType { get; set; }
@@ -93,9 +95,4 @@ namespace BeautyAtHome.ViewModels
         public string DisplayName { get; set; }
     }
 
-    public class GalleryPagingSM
-    {
-        public int Id { get; set; }
-        public string Name { get; set; }
-    }
 }

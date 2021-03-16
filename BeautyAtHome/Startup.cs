@@ -1,6 +1,7 @@
 using ApplicationCore.Services;
 using AutoMapper;
 using BeautyAtHome.Authorization;
+using BeautyAtHome.ExternalService;
 using BeautyAtHome.Utils;
 using FirebaseAdmin;
 using Google.Apis.Auth.OAuth2;
@@ -58,14 +59,18 @@ namespace BeautyAtHome
 
             services.AddSingleton<IAuthorizationPolicyProvider, RequiredRolePolicyProvider>();
             services.AddSingleton<IAuthorizationHandler, RequiredRoleHandler>();
+            services.AddSingleton<IUploadFileService, UploadFileService>();
+            services.AddSingleton<IJwtTokenProvider, JwtTokenProvider>();
+            services.AddSingleton<IPushNotificationService, PushNotificationService>();
 
             //services.AddTransient<IServiceRepository, ServiceRepository>();
             //services.AddTransient<IAccountRepository, AccountRepository>();
 
             services.AddTransient<IBeautyServicesService, BeautyServicesService>();
             services.AddTransient<IAccountService, AccountService>();
+            services.AddTransient<IGalleryService, GalleryService>();
 
-            services.AddSingleton<IJwtTokenProvider, JwtTokenProvider>();
+            
 
             services
             .AddAuthentication(JwtBearerDefaults.AuthenticationScheme)

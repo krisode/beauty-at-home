@@ -3,7 +3,6 @@
     public class AuthCM
     {
         public string IdToken { get; set; }
-        public string Email { get; set; }
         public string DisplayName { get; set; }
     }
 
@@ -15,6 +14,4 @@
         public string AccessToken { get; set; }
         public string ExpiresIn { get; set; }
     }
-
-
 }

@@ -11,6 +11,7 @@ namespace Infrastructure.Contexts
         {
             Accounts = new HashSet<Account>();
             Bookings = new HashSet<Booking>();
+            FeedBacks = new HashSet<FeedBack>();
             Images = new HashSet<Image>();
             Services = new HashSet<Service>();
         }
@@ -19,11 +20,11 @@ namespace Infrastructure.Contexts
         public string Name { get; set; }
         public string Description { get; set; }
         public int? DefaultImageId { get; set; }
-        public string ShareSetting { get; set; }
 
         public virtual Image DefaultImage { get; set; }
         public virtual ICollection<Account> Accounts { get; set; }
         public virtual ICollection<Booking> Bookings { get; set; }
+        public virtual ICollection<FeedBack> FeedBacks { get; set; }
         public virtual ICollection<Image> Images { get; set; }
         public virtual ICollection<Service> Services { get; set; }
     }

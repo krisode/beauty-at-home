@@ -17,6 +17,6 @@ namespace Infrastructure.Contexts
         public string Description { get; set; }
         public int? GalleryId { get; set; }
 
-        public ICollection<Service> Services { get; set; }
+        public virtual ICollection<Service> Services { get; set; }
     }
 }
