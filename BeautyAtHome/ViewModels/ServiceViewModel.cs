@@ -95,9 +95,4 @@ namespace BeautyAtHome.ViewModels
         public string DisplayName { get; set; }
     }
 
-    public class GalleryPagingSM
-    {
-        public int Id { get; set; }
-        public string Name { get; set; }
-    }
 }

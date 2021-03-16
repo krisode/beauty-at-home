@@ -28,7 +28,6 @@ namespace BeautyAtHome.Controllers
         }
 
 
-
         /// <summary>
         /// Get a specific service by service id
         /// </summary>
@@ -88,12 +87,12 @@ namespace BeautyAtHome.Controllers
             IQueryable<Service> serviceList = _service.GetAll(s => s.ServiceType, s => s.Gallery, s => s.Account);
             if (!string.IsNullOrEmpty(model.Description))
             {
-                serviceList = serviceList.Where(s => s.Description.Contains(s.Description));
+                serviceList = serviceList.Where(s => s.Description.Contains(model.Description));
             }
 
             if (!string.IsNullOrEmpty(model.ServiceName))
             {
-                serviceList = serviceList.Where(s => s.ServiceName.Contains(s.ServiceName));
+                serviceList = serviceList.Where(s => s.ServiceName.Contains(model.ServiceName));
             }
 
             if (model.CreatedAtMin.HasValue)
@@ -141,10 +140,10 @@ namespace BeautyAtHome.Controllers
                 serviceList = serviceList.Where(s => s.Status.Equals("Active"));
             }
 
-            if (model.IsServiceCombo == true)
+            /*if (model.IsServiceCombo == true)
             {
                 serviceList = serviceList.Where(s => s.IsServiceCombo == true);
-            }
+            }*/
 
             if (pageSize == 0)
             {

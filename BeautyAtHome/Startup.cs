@@ -66,6 +66,7 @@ namespace BeautyAtHome
 
             services.AddTransient<IBeautyServicesService, BeautyServicesService>();
             services.AddTransient<IAccountService, AccountService>();
+            services.AddTransient<IGalleryService, GalleryService>();
 
             services.AddSingleton<IJwtTokenProvider, JwtTokenProvider>();
 
