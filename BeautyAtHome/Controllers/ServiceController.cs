@@ -47,7 +47,7 @@ namespace BeautyAtHome.Controllers
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
 
-        public async Task<ActionResult<ServicePagingSM>> GetServiceById(int id)
+        public ActionResult<ServicePagingSM> GetServiceById(int id)
         {
             IQueryable<Service> serviceList = _service.GetAll(s => s.ServiceType, s => s.Gallery, s => s.Account);
             Service serviceSearch = serviceList.FirstOrDefault(s => s.Id == id);
@@ -82,7 +82,7 @@ namespace BeautyAtHome.Controllers
         [Produces("application/json")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<ActionResult<IEnumerable<ServiceVM>>> GetAllService([FromQuery] ServiceSM model, int pageSize, int pageIndex)
+        public ActionResult<IEnumerable<ServiceVM>> GetAllService([FromQuery] ServiceSM model, int pageSize, int pageIndex)
         {
             IQueryable<Service> serviceList = _service.GetAll(s => s.ServiceType, s => s.Gallery, s => s.Account);
             if (!string.IsNullOrEmpty(model.Description))
@@ -219,7 +219,7 @@ namespace BeautyAtHome.Controllers
                 await _service.Save();
                 
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 return StatusCode(StatusCodes.Status500InternalServerError);
             }
