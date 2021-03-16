@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using BeautyAtHome.ViewModels;
 using Infrastructure.Contexts;
+using System.Collections.Generic;
 
 namespace BeautyAtHome.Utils
 {
@@ -23,6 +24,15 @@ namespace BeautyAtHome.Utils
 
             #region AutoMapper GalleryViewModel
             CreateMap<Gallery, GalleryPagingSM>();
+            CreateMap<Gallery, GalleryVM>();
+            CreateMap<GalleryCM, Gallery>();
+            #endregion
+
+            #region AutoMapper ImageViewModel
+            /*CreateMap<ICollection<Image>, ImagesPagingSM>();*/
+            CreateMap<Image, ImageDefaultPagingSM>();
+            CreateMap<ImageCM, Image>();
+            CreateMap<Image, ImageVM>();
             #endregion
 
             #region AutoMapper ServiceTypeViewModel

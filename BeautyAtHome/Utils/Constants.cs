@@ -23,7 +23,12 @@
         {
             public const string ROLE = "role";
             public const string UID = "uid";
+            public const string EMAIL = "email";
+        }
 
+        public static class HeaderClaims
+        {
+            public const string FIREBASE_AUTH = "FirebaseAuth";
         }
 
         public static class AccountStatus
@@ -36,6 +41,15 @@
             public const string ACTIVE = "Active";
 
             public const string DISABLED = "Disabled";
+        }
+
+        public static class AppSetting
+        {
+            public const string FirebaseBucket = "Firebase:Bucket";
+            public const string FirebaseApiKey = "Firebase:ApiKey";
+            public const string FirebaseAuthEmail = "Firebase:Email";
+            public const string FirebaseAuthPassword = "Firebase:Password";
+            
         }
     }
 }
