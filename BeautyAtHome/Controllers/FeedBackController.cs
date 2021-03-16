@@ -165,7 +165,7 @@ namespace BeautyAtHome.Controllers
             try
             {
                 feedBachUpdated.Id = feedBack.Id;
-                feedBachUpdated.RateScore = feedBack.RateScore;
+                /*feedBachUpdated.RateScore = feedBack.RateScore;*/
                 feedBachUpdated.BookingDetailId = bookingDetailID;
                 feedBachUpdated.GalleryId = galleryId;
                 feedBachUpdated.FeedbackContent = feedBack.FeedbackContent;

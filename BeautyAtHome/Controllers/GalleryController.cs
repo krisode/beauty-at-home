@@ -46,7 +46,7 @@ namespace BeautyAtHome.Controllers
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public ActionResult<GalleryVM> GetGalleryById(int id)
         {
-            IQueryable<Gallery> galleryList = _service.GetAll(s => s.DefaultImage, s => s.Images);
+            IQueryable<Gallery> galleryList = _service.GetAll(s => s.Images);
             Gallery gallerySearch = galleryList.FirstOrDefault(s => s.Id == id);
             GalleryVM rtnGallery = null;
             if (gallerySearch != null)
@@ -81,7 +81,7 @@ namespace BeautyAtHome.Controllers
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public ActionResult<IEnumerable<GalleryVM>> GetAllGallery([FromQuery] GallerySM model, int pageSize, int pageIndex)
         {
-            IQueryable<Gallery> galleryList = _service.GetAll(s => s.DefaultImage, s => s.Images);
+            IQueryable<Gallery> galleryList = _service.GetAll(s => s.Images);
 
             if (!string.IsNullOrEmpty(model.Name))
             {
@@ -93,10 +93,10 @@ namespace BeautyAtHome.Controllers
                 galleryList = galleryList.Where(s => s.Description.Contains(model.Description));
             }
 
-            if (model.DefaultImageId != 0)
+           /* if (model.DefaultImageId != 0)
             {
                 galleryList = galleryList.Where(s => s.DefaultImageId == model.DefaultImageId);
-            }
+            }*/
 
             if (pageSize == 0)
             {
@@ -150,7 +150,7 @@ namespace BeautyAtHome.Controllers
             {
                 /*crtService.CreatedDate = crtDate;
                 crtService.UpdatedDate = updDate;*/
-                crtGallery.DefaultImageId = defaultImageId;
+                /*crtGallery.DefaultImageId = defaultImageId;*/
 
                 await _service.AddAsync(crtGallery);
                 await _service.Save();
@@ -196,7 +196,7 @@ namespace BeautyAtHome.Controllers
                 galleryUpdated.Id = gallery.Id;
                 galleryUpdated.Name = gallery.Name;
                 galleryUpdated.Description = gallery.Description;
-                galleryUpdated.DefaultImageId = gallery.DefaultImageId;
+                /*galleryUpdated.DefaultImageId = gallery.DefaultImageId;*/
                 /*serviceUpdated.Price = service.Price;
                 serviceUpdated.EstimateTime = service.EstimateTime;
                 serviceUpdated.Status = service.Status;
