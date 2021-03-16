@@ -44,7 +44,7 @@ namespace BeautyAtHome.Controllers
         [Produces("application/json")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<ActionResult<GalleryVM>> GetGalleryById(int id)
+        public ActionResult<GalleryVM> GetGalleryById(int id)
         {
             IQueryable<Gallery> galleryList = _service.GetAll(s => s.DefaultImage, s => s.Images);
             Gallery gallerySearch = galleryList.FirstOrDefault(s => s.Id == id);
@@ -79,7 +79,7 @@ namespace BeautyAtHome.Controllers
         [Produces("application/json")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<ActionResult<IEnumerable<GalleryVM>>> GetAllGallery([FromQuery] GallerySM model, int pageSize, int pageIndex)
+        public ActionResult<IEnumerable<GalleryVM>> GetAllGallery([FromQuery] GallerySM model, int pageSize, int pageIndex)
         {
             IQueryable<Gallery> galleryList = _service.GetAll(s => s.DefaultImage, s => s.Images);
 
