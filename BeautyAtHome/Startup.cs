@@ -60,6 +60,8 @@ namespace BeautyAtHome
             services.AddSingleton<IAuthorizationPolicyProvider, RequiredRolePolicyProvider>();
             services.AddSingleton<IAuthorizationHandler, RequiredRoleHandler>();
             services.AddSingleton<IUploadFileService, UploadFileService>();
+            services.AddSingleton<IJwtTokenProvider, JwtTokenProvider>();
+            services.AddSingleton<IPushNotificationService, PushNotificationService>();
 
             //services.AddTransient<IServiceRepository, ServiceRepository>();
             //services.AddTransient<IAccountRepository, AccountRepository>();
@@ -67,7 +69,7 @@ namespace BeautyAtHome
             services.AddTransient<IBeautyServicesService, BeautyServicesService>();
             services.AddTransient<IAccountService, AccountService>();
 
-            services.AddSingleton<IJwtTokenProvider, JwtTokenProvider>();
+            
 
             services
             .AddAuthentication(JwtBearerDefaults.AuthenticationScheme)

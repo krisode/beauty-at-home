@@ -1,11 +1,10 @@
 ﻿using BeautyAtHome.Utils;
+using Firebase.Auth;
 using Firebase.Storage;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Threading.Tasks;
 using static BeautyAtHome.Utils.Constants;
 
@@ -13,7 +12,7 @@ namespace BeautyAtHome.ExternalService
 {
     public interface IUploadFileService
     {
-        Task<string> UploadFile(IFormFile file, string token, string bucket, string directory);
+        Task<string> UploadFile(string idToken, IFormFile file, string bucket, string directory);
     }
     public class UploadFileService : IUploadFileService
     {
@@ -24,25 +23,16 @@ namespace BeautyAtHome.ExternalService
         public UploadFileService(IConfiguration configuration, IJwtTokenProvider jwtTokenProvider)
         {
             _configuration = configuration;
-            
             _jwtTokenProvider = jwtTokenProvider;
         }
 
-        public async Task<string> UploadFile(IFormFile file, string token, string bucket, string directory)
+        public async Task<string> UploadFile(string idToken, IFormFile file, string bucket, string directory)
         {
-            if(token == null)
-            {
-                throw new Exception("Failed to authenticate user!");
-            }
-            string uid = await _jwtTokenProvider.GetPayloadFromToken(token, TokenClaims.UID);
-
-            var customToken = await FirebaseAdmin.Auth.FirebaseAuth.DefaultInstance.CreateCustomTokenAsync(uid);
-
             var task = new FirebaseStorage(
-                _configuration["Firebase:Bucket"],
+                _configuration[AppSetting.FirebaseBucket],
                 new FirebaseStorageOptions()
                 {
-                    AuthTokenAsyncFactory = () => Task.FromResult(customToken)
+                    AuthTokenAsyncFactory = () => Task.FromResult(idToken)
                 });
             string fileExtension = Path.GetExtension(file.FileName);
             Guid guid = Guid.NewGuid();
