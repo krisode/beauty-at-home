@@ -61,6 +61,11 @@ namespace BeautyAtHome.Utils
             CreateMap<AddressCM, Address>();
             CreateMap<Address, AddressVM>();
             #endregion
+
+            #region AutoMapper AccountViewModel
+            CreateMap<AccountCM, Account>();
+            CreateMap<Account, AccountVM>();
+            #endregion
         }
     }
 }
