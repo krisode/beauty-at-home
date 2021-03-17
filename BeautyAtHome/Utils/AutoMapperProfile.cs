@@ -56,6 +56,11 @@ namespace BeautyAtHome.Utils
             CreateMap<BookingDetail, BookingDetailVM>();
             CreateMap<BookingDetailCM, BookingDetail>();
             #endregion
+
+            #region AutoMapper AddressViewModel
+            CreateMap<AddressCM, Address>();
+            CreateMap<Address, AddressVM>();
+            #endregion
         }
     }
 }
