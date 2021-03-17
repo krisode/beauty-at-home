@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata;
 
@@ -31,7 +31,6 @@ namespace Infrastructure.Contexts
         {
             if (!optionsBuilder.IsConfigured)
             {
-            
             }
         }
 
@@ -42,9 +41,6 @@ namespace Infrastructure.Contexts
             modelBuilder.Entity<Account>(entity =>
             {
                 entity.ToTable("Account");
-
-                entity.HasIndex(e => e.Email, "UQ__Account__A9D10534A113C252")
-                    .IsUnique();
 
                 entity.Property(e => e.DisplayName)
                     .IsRequired()
@@ -167,8 +163,6 @@ namespace Infrastructure.Contexts
             {
                 entity.ToTable("FeedBack");
 
-                entity.Property(e => e.Id).ValueGeneratedNever();
-
                 entity.Property(e => e.CreateDate).HasColumnType("datetime");
 
                 entity.Property(e => e.FeedbackContent)
@@ -199,11 +193,6 @@ namespace Infrastructure.Contexts
                 entity.Property(e => e.Name)
                     .IsRequired()
                     .HasMaxLength(50);
-
-                entity.HasOne(d => d.DefaultImage)
-                    .WithMany(p => p.Galleries)
-                    .HasForeignKey(d => d.DefaultImageId)
-                    .HasConstraintName("FK_Gallery_Image");
             });
 
             modelBuilder.Entity<Image>(entity =>
@@ -216,7 +205,7 @@ namespace Infrastructure.Contexts
 
                 entity.Property(e => e.ImageUrl)
                     .IsRequired()
-                    .HasMaxLength(100)
+                    .HasMaxLength(300)
                     .IsUnicode(false);
 
                 entity.HasOne(d => d.Gallery)

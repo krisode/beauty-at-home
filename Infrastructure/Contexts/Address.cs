@@ -15,8 +15,6 @@ namespace Infrastructure.Contexts
 
         public int Id { get; set; }
         public string Location { get; set; }
-        public int Latitude { get; set; }
-        public int Longtitude { get; set; }
         public int AccountId { get; set; }
         public string Note { get; set; }
         public string LocationName { get; set; }

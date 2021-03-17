@@ -83,11 +83,6 @@ namespace BeautyAtHome.ViewModels
         public GalleryPagingSM Gallery { get; set; }
         public ServiceTypePagingSM ServiceType { get; set; }
     }
-    public class ServiceTypePagingSM
-    {
-        public int Id { get; set; }
-        public string Name { get; set; }
-    }
 
     public class AccountPagingSM
     {

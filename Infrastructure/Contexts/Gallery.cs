@@ -19,9 +19,7 @@ namespace Infrastructure.Contexts
         public int Id { get; set; }
         public string Name { get; set; }
         public string Description { get; set; }
-        public int? DefaultImageId { get; set; }
 
-        public virtual Image DefaultImage { get; set; }
         public virtual ICollection<Account> Accounts { get; set; }
         public virtual ICollection<Booking> Bookings { get; set; }
         public virtual ICollection<FeedBack> FeedBacks { get; set; }
