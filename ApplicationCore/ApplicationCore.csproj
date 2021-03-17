@@ -9,10 +9,6 @@
     <EmbeddedResource Remove="Enums\**" />
     <None Remove="Enums\**" />
   </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Services\" />
-  </ItemGroup>
   <ItemGroup>
     <PackageReference Include="FirebaseAdmin" Version="2.0.0" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="5.0.2" />

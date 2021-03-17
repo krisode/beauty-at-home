@@ -41,20 +41,26 @@ namespace BeautyAtHome.Utils
             CreateMap<ServiceType, ServiceTypeVM>();
             #endregion
 
-            #region
+            #region AutoMapper FeedBackViewModel
             CreateMap<FeedBack, FeedBackVM>();
             CreateMap<FeedBackCM, FeedBack>();
             CreateMap<FeedBackVM, FeedBack>();
             #endregion
 
-            #region
+            #region AutoMapper BookingViewModel
             CreateMap<Booking, BookingVM>();
             CreateMap<BookingCM, Booking>();
             #endregion
 
-            #region
+            #region AutoMapper BookingDetailViewModel
             CreateMap<BookingDetail, BookingDetailVM>();
             CreateMap<BookingDetailCM, BookingDetail>();
+            #endregion
+
+            #region AutoMapper AddressViewModel
+            CreateMap<Address, AddressPagingSM>();
+            CreateMap<AddressCM, Address>();
+            CreateMap<Address, AddressVM>();
             #endregion
         }
     }
