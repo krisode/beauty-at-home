@@ -14,7 +14,6 @@ namespace BeautyAtHome.ViewModels
         public int Id { get; set; }
         public string Name { get; set; }
         public string Description { get; set; }
-        public int DefaultImageId { get; set; }
         public ICollection<ImageDefaultPagingSM> Images { get; set; }
 
     }
@@ -23,7 +22,6 @@ namespace BeautyAtHome.ViewModels
     {
         public string Name { get; set; }
         public string Description { get; set; }
-        public int DefaultImageId { get; set; }
     }
 
     public class GalleryUM
@@ -31,7 +29,6 @@ namespace BeautyAtHome.ViewModels
         public int Id { get; set; }
         public string Name { get; set; }
         public string Description { get; set; }
-        public int DefaultImageId { get; set; }
 
     }
 
@@ -39,6 +36,7 @@ namespace BeautyAtHome.ViewModels
     {
         public int Id { get; set; }
         public string Name { get; set; }
+        public ICollection<ImageDefaultPagingSM> Images { get; set; }
     }
 
     public class ImageDefaultPagingSM
