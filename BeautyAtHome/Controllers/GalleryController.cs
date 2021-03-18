@@ -141,8 +141,6 @@ namespace BeautyAtHome.Controllers
         {
             /*DateTime crtDate = DateTime.Now;
             DateTime updDate = DateTime.Now;*/
-            int defaultImageId = 3;
-
 
             Gallery crtGallery = _mapper.Map<Gallery>(galleryModel);
 
