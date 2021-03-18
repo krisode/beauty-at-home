@@ -12,7 +12,7 @@ using System.Threading.Tasks;
 
 namespace BeautyAtHome.Controllers
 {
-    [Route("api/v1.0/account")]
+    [Route("api/v1.0/accounts")]
     [ApiController]
     public class AccountController : ControllerBase
     {
@@ -56,7 +56,7 @@ namespace BeautyAtHome.Controllers
             Account account = _mapper.Map<Account>(accountCM);
             Account createAccount = await _accountService.AddAsync(account);
             await _accountService.Save();
-            return Created("/account", createAccount);
+            return CreatedAtAction("GetAccountById", new { id = createAccount.Id}, createAccount);
         }
 
         /// <summary>
