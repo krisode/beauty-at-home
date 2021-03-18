@@ -138,7 +138,7 @@ namespace BeautyAtHome.Controllers
                 await _service.Save();
 
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 return StatusCode(StatusCodes.Status500InternalServerError);
             }
@@ -165,7 +165,7 @@ namespace BeautyAtHome.Controllers
         [Produces("application/json")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<ActionResult<IEnumerable<BookingVM>>> GetAllBooking([FromQuery] BookingSM model, int pageSize, int pageIndex)
+        public ActionResult<IEnumerable<BookingVM>> GetAllBooking([FromQuery] BookingSM model, int pageSize, int pageIndex)
         {
             IQueryable<Booking> bookingList = _service.GetAll(s => s.BeautyArtistAccount, s => s.CustomerAccount, s => s.EndAddress, s => s.Gallery, s => s.BookingDetails);
 
@@ -285,7 +285,7 @@ namespace BeautyAtHome.Controllers
         /// Update Booking with specified id
         /// </summary>
         /// <param name="id">Booking's id</param>
-        /// <param name="service">Information applied to updated Booking</param>
+        /// <param name="booking">Information applied to updated Booking</param>
         /// <response code="204">Update Booking successfully</response>
         /// <response code="400">Booking's id does not exist or does not match with the id in parameter</response>
         /// <response code="500">Failed to update</response>
