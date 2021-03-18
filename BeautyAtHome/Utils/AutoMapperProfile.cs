@@ -20,6 +20,8 @@ namespace BeautyAtHome.Utils
 
             #region AutoMapper AccountViewModel
             CreateMap<Account, AccountPagingSM>();
+            CreateMap<Account, AccountVM>();
+            CreateMap<AccountCM, Account>();
             #endregion
 
             #region AutoMapper GalleryViewModel
