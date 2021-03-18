@@ -15,7 +15,6 @@ namespace BeautyAtHome.ViewModels
         public string Name { get; set; }
         public string Description { get; set; }
         public int DefaultImageId { get; set; }
-        public ImageDefaultPagingSM DefaultImage { get; set; }
         public ICollection<ImageDefaultPagingSM> Images { get; set; }
 
     }

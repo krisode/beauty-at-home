@@ -126,7 +126,7 @@ namespace BeautyAtHome.Controllers
                 await _service.Save();
 
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 return StatusCode(StatusCodes.Status500InternalServerError);
             }
@@ -153,7 +153,7 @@ namespace BeautyAtHome.Controllers
         [Produces("application/json")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<ActionResult<IEnumerable<BookingDetailVM>>> GetAllBookingDetail([FromQuery] BookingDetailSM model, int pageSize, int pageIndex)
+        public ActionResult<IEnumerable<BookingDetailVM>> GetAllBookingDetail([FromQuery] BookingDetailSM model, int pageSize, int pageIndex)
         {
             IQueryable<BookingDetail> bookingDetailList = _service.GetAll(s => s.Booking, s => s.Service, s => s.FeedBacks);
 

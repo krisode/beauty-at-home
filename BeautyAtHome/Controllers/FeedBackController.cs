@@ -141,7 +141,7 @@ namespace BeautyAtHome.Controllers
         /// Update feedback with specified id
         /// </summary>
         /// <param name="id">FeedBack's id</param>
-        /// <param name="feedback">Information applied to updated feedback</param>
+        /// <param name="feedBack">Information applied to updated feedback</param>
         /// <response code="204">Update feedback successfully</response>
         /// <response code="400">BookingDetailId's id does not exist or does not match with the id in parameter</response>
         /// <response code="500">Failed to update</response>
@@ -201,7 +201,7 @@ namespace BeautyAtHome.Controllers
         [Produces("application/json")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<ActionResult<IEnumerable<FeedBackVM>>> GetAllFeedBack([FromQuery] FeedBackSM model, int pageSize, int pageIndex)
+        public ActionResult<IEnumerable<FeedBackVM>> GetAllFeedBack([FromQuery] FeedBackSM model, int pageSize, int pageIndex)
         {
             IQueryable<FeedBack> feedBackList = _service.GetAll(s => s.BookingDetail, s => s.Gallery);
 
