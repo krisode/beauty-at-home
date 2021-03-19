@@ -35,6 +35,7 @@ namespace BeautyAtHome.Utils
     {
         private readonly IMapper _mapper;
         private IQueryable<T> _source;
+        private IQueryable<T> _sourcePageSize;
         private int _pageIndex;
         private int _pageSize;
 
@@ -58,7 +59,7 @@ namespace BeautyAtHome.Utils
         {
             _pageIndex = pageIndex;
             _pageSize = pageSize;
-            _source = _source.OrderBy(selector).Skip((pageIndex - 1) * pageSize).Take(pageSize);
+            _sourcePageSize = _source.OrderBy(selector).Skip((pageIndex - 1) * pageSize).Take(pageSize);
             return this;
         }
 
@@ -71,16 +72,19 @@ namespace BeautyAtHome.Utils
                 PageSize = _pageSize,
                 TotalPage = (int)Math.Ceiling((double)Count / _pageSize),
                 CurrentPage = _pageIndex,
-                Content = _source.Select(t => _mapper.Map<TResult>(t))
+                Content = _sourcePageSize.Select(t => _mapper.Map<TResult>(t))
             };
             if (_pageIndex > 1)
             {
                 pagingVM.PreviousPage = _pageIndex - 1;
             }
 
-            if (_pageIndex < count)
+            if (_pageIndex < count && _pageIndex + 1 <= pagingVM.TotalPage)
             {
                 pagingVM.NextPage = _pageIndex + 1;
+            } else
+            {
+                pagingVM.NextPage = _pageIndex;
             }
 
             return pagingVM;
