@@ -19,13 +19,16 @@ namespace BeautyAtHome.Controllers
         private readonly IBeautyServicesService _service;
         private readonly IMapper _mapper;
         private readonly IPagingSupport<Service> _pagingSupport;
+        private readonly IFeedBackService _feedbackService;
 
-        public ServiceController(IBeautyServicesService service, IMapper mapper, IPagingSupport<Service> pagingSupport)
+        public ServiceController(IBeautyServicesService service, IMapper mapper, IPagingSupport<Service> pagingSupport, IFeedBackService feedbackService)
         {
             _service = service;
             _mapper = mapper;
             _pagingSupport = pagingSupport;
+            _feedbackService = feedbackService;
         }
+
 
 
         /// <summary>
@@ -49,12 +52,23 @@ namespace BeautyAtHome.Controllers
 
         public ActionResult<ServicePagingSM> GetServiceById(int id)
         {
-            IQueryable<Service> serviceList = _service.GetAll(s => s.ServiceType, s => s.Gallery, s => s.Account);
+            IQueryable<Service> serviceList = _service.GetAll(s => s.ServiceType, s => s.Gallery, s => s.Account, s => s.Gallery.Images, s => s.BookingDetails);
             Service serviceSearch = serviceList.FirstOrDefault(s => s.Id == id);
             ServicePagingSM rtnService = null;
+            
             if (serviceSearch != null)
             {
+                var listBookingDetail = serviceSearch.BookingDetails;
+                List<FeedBackVM> listFeedback = new List<FeedBackVM>();
+
+                foreach (BookingDetail bd in listBookingDetail)
+                {
+                    var feedback = _feedbackService.GetAll().Where(f => f.BookingDetailId == bd.Id).ToList();
+                    bd.FeedBacks = feedback;
+                }
+
                 rtnService = _mapper.Map<ServicePagingSM>(serviceSearch);
+                
                 return Ok(rtnService);
             } else
             {
