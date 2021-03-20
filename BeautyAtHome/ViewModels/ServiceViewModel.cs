@@ -1,5 +1,7 @@
-﻿using Infrastructure.Contexts;
+﻿
+using Infrastructure.Contexts;
 using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
 namespace BeautyAtHome.ViewModels
@@ -82,6 +84,10 @@ namespace BeautyAtHome.ViewModels
         public AccountPagingSM Account { get; set; }
         public GalleryPagingSM Gallery { get; set; }
         public ServiceTypePagingSM ServiceType { get; set; }
+
+        public ICollection<BookingDetailVM> BookingDetails { get; set; }
+
     }
+
 
 }
