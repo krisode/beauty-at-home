@@ -20,6 +20,7 @@ namespace BeautyAtHome.ViewModels
         public int AccountId { get; set; }
         public string Note { get; set; }
         public string LocationName { get; set; }
+        public bool IsDefault { get; set; }
     }
 
     public class AddressSM
@@ -28,6 +29,7 @@ namespace BeautyAtHome.ViewModels
         public int AccountId { get; set; }
         public string Note { get; set; }
         public string LocationName { get; set; }
+        public bool IsDefault { get; set; }
 
     }
 
@@ -38,6 +40,7 @@ namespace BeautyAtHome.ViewModels
         public int AccountId { get; set; }
         public string Note { get; set; }
         public string LocationName { get; set; }
+        public bool IsDefault { get; set; }
     }
 
     public class AddressPagingSM
@@ -45,5 +48,6 @@ namespace BeautyAtHome.ViewModels
         public int Id { get; set; }
         public string Location { get; set; }
         public string LocationName { get; set; }
+        public bool IsDefault { get; set; }
     }
 }
