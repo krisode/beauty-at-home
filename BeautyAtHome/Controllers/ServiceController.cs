@@ -50,7 +50,7 @@ namespace BeautyAtHome.Controllers
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
 
-        public ActionResult<ServicePagingSM> GetServiceById(int id)
+        public ActionResult<ServicePagingSM> GetServiceById(int id, [FromQuery] bool withRateScore)
         {
             IQueryable<Service> serviceList = _service.GetAll(s => s.ServiceType, s => s.Gallery, s => s.Account, s => s.Gallery.Images, s => s.BookingDetails);
             Service serviceSearch = serviceList.FirstOrDefault(s => s.Id == id);
@@ -59,6 +59,9 @@ namespace BeautyAtHome.Controllers
             if (serviceSearch != null)
             {
                 rtnService = _mapper.Map<ServicePagingSM>(serviceSearch);
+                var rating = _feedbackService.GetRateScoreByService(rtnService.Id);
+                rtnService.RateScore = rating[0];
+                rtnService.TotalFeedback = (int)rating[1];
                 return Ok(rtnService);
             } else
             {
@@ -86,7 +89,7 @@ namespace BeautyAtHome.Controllers
         [Produces("application/json")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public ActionResult<IEnumerable<ServiceVM>> GetAllService([FromQuery] ServiceSM model, int pageSize, int pageIndex)
+        public ActionResult<IEnumerable<ServiceVM>> GetAllService([FromQuery] ServiceSM model, int pageSize, int pageIndex, bool withRateScore)
         {
             IQueryable<Service> serviceList = _service.GetAll(s => s.ServiceType, s => s.Gallery.Images, s => s.Account);
             if (!string.IsNullOrEmpty(model.Description))
@@ -172,6 +175,16 @@ namespace BeautyAtHome.Controllers
             var pagedModel = _pagingSupport.From(serviceList)
                 .GetRange(pageIndex, pageSize, s => s.Id)
                 .Paginate<ServicePagingSM>();
+
+            if (withRateScore)
+            {
+                pagedModel.Content = pagedModel.Content.AsEnumerable().Select<ServicePagingSM, ServicePagingSM>(_ => {
+                    var rating = _feedbackService.GetRateScoreByService(_.Id);
+                    _.RateScore = rating[0];
+                    _.TotalFeedback = (int) rating[1];
+                    return _;
+                }).AsQueryable();
+            }
 
             return Ok(pagedModel);
         }
