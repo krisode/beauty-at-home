@@ -139,15 +139,25 @@ namespace BeautyAtHome.Controllers
                 serviceList = serviceList.Where(s => s.EstimateTime <= model.UpperTime);
             }
             
+            if (model.AccountId != 0)
+            {
+                serviceList = serviceList.Where(s => s.AccountId == model.AccountId);
+            }
+
+            if (model.ServiceTypeId != 0)
+            {
+                serviceList = serviceList.Where(s => s.ServiceTypeId == model.ServiceTypeId);
+            }
+
             if (model.Status == true)
             {
                 serviceList = serviceList.Where(s => s.Status.Equals("Active"));
             }
 
-            /*if (model.IsServiceCombo == true)
+            if (model.GalleryId != 0)
             {
-                serviceList = serviceList.Where(s => s.IsServiceCombo == true);
-            }*/
+                serviceList = serviceList.Where(s => s.GalleryId == model.GalleryId);
+            }
 
             if (pageSize == 0)
             {

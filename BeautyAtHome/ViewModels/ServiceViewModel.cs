@@ -46,10 +46,10 @@ namespace BeautyAtHome.ViewModels
         public decimal UpperPrice { get; set; }
         public int LowerTime { get; set; }
         public int UpperTime { get; set; }
-        public int? AccountId { get; set; }
+        public int AccountId { get; set; }
         public int ServiceTypeId { get; set; }
         public bool Status { get; set; }
-        public int? GalleryId { get; set; }
+        public int GalleryId { get; set; }
 
     }
 
