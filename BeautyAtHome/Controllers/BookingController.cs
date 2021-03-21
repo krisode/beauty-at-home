@@ -51,7 +51,8 @@ namespace BeautyAtHome.Controllers
         public async Task<ActionResult<BookingVM>> GetBookingById(int id)
         {
 
-            var booking = await _service.GetByIdAsync(id);
+            IQueryable<Booking> bookingList = _service.GetAll(s => s.BeautyArtistAccount, s => s.CustomerAccount, s => s.BookingDetails);
+            var booking = bookingList.FirstOrDefault(_ => _.Id == id);
 
             if (booking == null)
             {
