@@ -22,10 +22,8 @@ namespace Infrastructure.Contexts
         public string Role { get; set; }
         public string Status { get; set; }
         public int? GalleryId { get; set; }
-        public int? DefaultAddressId { get; set; }
         public bool? IsBeautyArtist { get; set; }
 
-        public virtual Address DefaultAddress { get; set; }
         public virtual Gallery Gallery { get; set; }
         public virtual ICollection<Address> Addresses { get; set; }
         public virtual ICollection<Booking> BookingBeautyArtistAccounts { get; set; }

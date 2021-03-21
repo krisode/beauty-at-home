@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata;
 
@@ -31,6 +31,8 @@ namespace Infrastructure.Contexts
         {
             if (!optionsBuilder.IsConfigured)
             {
+#warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see http://go.microsoft.com/fwlink/?LinkId=723263.
+                optionsBuilder.UseSqlServer("Server=.;Database=BeautyServiceProvider;Trusted_Connection=True;");
             }
         }
 
@@ -41,6 +43,9 @@ namespace Infrastructure.Contexts
             modelBuilder.Entity<Account>(entity =>
             {
                 entity.ToTable("Account");
+
+                entity.HasIndex(e => e.Email, "UQ__Account__A9D10534A113C252")
+                    .IsUnique();
 
                 entity.Property(e => e.DisplayName)
                     .IsRequired()
@@ -63,11 +68,6 @@ namespace Infrastructure.Contexts
                     .IsRequired()
                     .HasMaxLength(30)
                     .IsUnicode(false);
-
-                entity.HasOne(d => d.DefaultAddress)
-                    .WithMany(p => p.Accounts)
-                    .HasForeignKey(d => d.DefaultAddressId)
-                    .HasConstraintName("FK_Account_Address");
 
                 entity.HasOne(d => d.Gallery)
                     .WithMany(p => p.Accounts)
@@ -98,19 +98,19 @@ namespace Infrastructure.Contexts
             {
                 entity.ToTable("Booking");
 
-                entity.Property(e => e.BookingType)
-                    .IsRequired()
-                    .HasMaxLength(100)
-                    .IsUnicode(false);
+                entity.Property(e => e.BeginAddress).HasMaxLength(50);
 
                 entity.Property(e => e.CreateDate).HasColumnType("datetime");
+
+                entity.Property(e => e.EndAddress)
+                    .IsRequired()
+                    .HasMaxLength(50);
 
                 entity.Property(e => e.Note).HasMaxLength(100);
 
                 entity.Property(e => e.Status)
                     .IsRequired()
-                    .HasMaxLength(30)
-                    .IsUnicode(false);
+                    .HasMaxLength(50);
 
                 entity.Property(e => e.UpdateDate).HasColumnType("datetime");
 
@@ -118,27 +118,14 @@ namespace Infrastructure.Contexts
                     .WithMany(p => p.BookingBeautyArtistAccounts)
                     .HasForeignKey(d => d.BeautyArtistAccountId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK_Booking_Account1");
+                    .HasConstraintName("FK_Booking_Account3");
 
                 entity.HasOne(d => d.CustomerAccount)
                     .WithMany(p => p.BookingCustomerAccounts)
                     .HasForeignKey(d => d.CustomerAccountId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK_Booking_Account");
-
-                entity.HasOne(d => d.EndAddress)
-                    .WithMany(p => p.Bookings)
-                    .HasForeignKey(d => d.EndAddressId)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK_Booking_Address");
-
-                entity.HasOne(d => d.Gallery)
-                    .WithMany(p => p.Bookings)
-                    .HasForeignKey(d => d.GalleryId)
-                    .HasConstraintName("FK_Booking_Gallery");
+                    .HasConstraintName("FK_Booking_Account2");
             });
-
-            
 
             modelBuilder.Entity<BookingDetail>(entity =>
             {
@@ -156,12 +143,15 @@ namespace Infrastructure.Contexts
                     .WithMany(p => p.BookingDetails)
                     .HasForeignKey(d => d.ServiceId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK__BookingDe__Servi__3E52440B");
+                    .HasConstraintName("FK_BookingDetail_Service");
             });
 
             modelBuilder.Entity<FeedBack>(entity =>
             {
                 entity.ToTable("FeedBack");
+
+                entity.HasIndex(e => e.BookingDetailId, "IX_FeedBack")
+                    .IsUnique();
 
                 entity.Property(e => e.CreateDate).HasColumnType("datetime");
 
@@ -170,8 +160,8 @@ namespace Infrastructure.Contexts
                     .HasMaxLength(300);
 
                 entity.HasOne(d => d.BookingDetail)
-                    .WithMany(p => p.FeedBacks)
-                    .HasForeignKey(d => d.BookingDetailId)
+                    .WithOne(p => p.FeedBack)
+                    .HasForeignKey<FeedBack>(d => d.BookingDetailId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("FK_FeedBack_BookingDetail");
 
@@ -269,8 +259,6 @@ namespace Infrastructure.Contexts
                     .IsRequired()
                     .HasMaxLength(100);
             });
-
-            
 
             OnModelCreatingPartial(modelBuilder);
         }
