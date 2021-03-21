@@ -84,7 +84,7 @@ namespace BeautyAtHome.Controllers
         {
             try
             {
-                IQueryable<Account> accountList = _accountService.GetAll(s => s.Services, s => s.Gallery, _ => _.Addresses);
+                IQueryable<Account> accountList = _accountService.GetAll(s => s.Services, s => s.Gallery.Images, _ => _.Addresses);
 
                 if (!string.IsNullOrEmpty(account.Email))
                 {
