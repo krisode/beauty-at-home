@@ -15,11 +15,9 @@ namespace BeautyAtHome.ViewModels
         public int CustomerAccountId { get; set; }
         public int BeautyArtistAccountId { get; set; }
         public string Note { get; set; }
-        public int EndAddressId { get; set; }
+        public string EndAddress { get; set; }
        // public DateTime? UpdateDate { get; set; }
-        public double? RateScore { get; set; } 
-        public int? GalleryId { get; set; }
-        public int? BeginAddressId { get; set; }
+        public string BeginAddress { get; set; }
         public double? TotalFee { get; set; }
         public double? TransportFee { get; set; }
 
@@ -34,17 +32,14 @@ namespace BeautyAtHome.ViewModels
         public int CustomerAccountId { get; set; } 
         public int BeautyArtistAccountId { get; set; } 
         public string Note { get; set; } 
-        public int EndAddressId { get; set; } 
+        public string EndAddress { get; set; } 
         public DateTime? UpdateDate { get; set; } 
-        // public double? RateScore { get; set; }
-        public int? GalleryId { get; set; }
-        public int? BeginAddressId { get; set; }
+        public string BeginAddress { get; set; }
         public double? TotalFee { get; set; }
         public double? TransportFee { get; set; }
 
         //public virtual Account BeautyArtistAccount { get; set; }
         //public virtual Account CustomerAccount { get; set; }
-        //public virtual Address EndAddress { get; set; }
         //public virtual Gallery Gallery { get; set; }
         //public virtual ICollection<BookingDetail> BookingDetails { get; set; }
     }
@@ -59,12 +54,10 @@ namespace BeautyAtHome.ViewModels
         public int CustomerAccountId { get; set; }
         public int BeautyArtistAccountId { get; set; }
         public string Note { get; set; }
-        public int EndAddressId { get; set; }
+        public string EndAddress { get; set; }
         public DateTime? UpdateDateMin { get; set; }
         public DateTime? UpdateDateMax { get; set; }
-        public double? RateScore { get; set; }
-        public int? GalleryId { get; set; }
-        public int? BeginAddressId { get; set; }
+        public string BeginAddress { get; set; }
         public double? TotalFee { get; set; }
         public double? TransportFee { get; set; }
 

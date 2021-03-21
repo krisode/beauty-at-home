@@ -49,7 +49,7 @@ namespace BeautyAtHome.ViewModels
 
         //public virtual Booking Booking { get; set; }
         //public virtual Service Service { get; set; }
-        //public virtual ICollection<FeedBack> FeedBacks { get; set; }
+        //public virtual FeedBackVM FeedBack { get; set; }
 
     }
 
@@ -65,6 +65,6 @@ namespace BeautyAtHome.ViewModels
 
         //public virtual Booking Booking { get; set; }
         //public virtual Service Service { get; set; }
-        //public virtual ICollection<FeedBack> FeedBacks { get; set; }
+        //public virtual FeedBackVM FeedBack { get; set; }
     }
 }

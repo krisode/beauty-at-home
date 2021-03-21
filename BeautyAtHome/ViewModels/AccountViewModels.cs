@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -23,7 +24,6 @@ namespace BeautyAtHome.ViewModels
         public string Role { get; set; }
         public string Status { get; set; }
         public int GalleryId { get; set; }
-        public int DefaultAddressId { get; set; }
         public bool IsBeautyArtist { get; set; }
     }
 
@@ -43,8 +43,7 @@ namespace BeautyAtHome.ViewModels
         public string Role { get; set; }
         public string Status { get; set; }
         public bool IsBeautyArtist { get; set; }
-        public int DefaultAddressId { get; set; }
-        public AddressPagingSM Address { get; set; }
+        public ICollection<AddressPagingSM> Addresses { get; set; }
         public GalleryPagingSM Gallery { get; set; }
         public ICollection<ServiceVM> Services { get; set; }
         
