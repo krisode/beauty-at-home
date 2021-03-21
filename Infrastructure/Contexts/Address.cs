@@ -12,7 +12,7 @@ namespace Infrastructure.Contexts
         public int AccountId { get; set; }
         public string Note { get; set; }
         public string LocationName { get; set; }
-
+        public bool IsDefault { get; set; }
         public virtual Account Account { get; set; }
     }
 }
