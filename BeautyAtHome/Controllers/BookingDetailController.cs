@@ -48,10 +48,12 @@ namespace BeautyAtHome.Controllers
         /*[SwaggerResponseExample(StatusCodes.Status200OK, typeof (ApplicationCore.DTOs.Booking))]*/
         [ProducesResponseType(StatusCodes.Status404NotFound)]
 
-        public async Task<ActionResult<BookingDetailVM>> GetBookingDetailById(int id)
+        public  ActionResult<BookingDetailVM> GetBookingDetailById(int id)
         {
-            
-            var bookingDetail = await _service.GetByIdAsync(id);
+
+            IQueryable<BookingDetail> bookingDetailQuery = _service.GetAll(_ => _.FeedBack.Gallery.Images);
+            BookingDetail bookingDetail = bookingDetailQuery.FirstOrDefault(s => s.Id == id);
+
 
             if (bookingDetail == null)
             {
@@ -155,7 +157,7 @@ namespace BeautyAtHome.Controllers
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public ActionResult<IEnumerable<BookingDetailVM>> GetAllBookingDetail([FromQuery] BookingDetailSM model, int pageSize, int pageIndex)
         {
-            IQueryable<BookingDetail> bookingDetailList = _service.GetAll(s => s.Booking, s => s.Service, s => s.FeedBacks);
+            IQueryable<BookingDetail> bookingDetailList = _service.GetAll(s => s.Booking, s => s.Service, s => s.FeedBack);
 
             if (!string.IsNullOrEmpty(model.ServiceName))
             {

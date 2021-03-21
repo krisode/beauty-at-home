@@ -21,7 +21,7 @@ namespace BeautyAtHome.ViewModels
         public int Id { get; set; }
         public double RateScore { get; set; }
         public int BookingDetailId { get; set; }
-        public int GalleryId { get; set; }
+        public GalleryVM Gallery { get; set; }
         public string FeedbackContent { get; set; }
         public DateTime CreateDate { get; set; }
 

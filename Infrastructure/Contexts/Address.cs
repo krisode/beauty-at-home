@@ -7,12 +7,6 @@ namespace Infrastructure.Contexts
 {
     public partial class Address
     {
-        public Address()
-        {
-            Accounts = new HashSet<Account>();
-            Bookings = new HashSet<Booking>();
-        }
-
         public int Id { get; set; }
         public string Location { get; set; }
         public int AccountId { get; set; }
@@ -20,7 +14,5 @@ namespace Infrastructure.Contexts
         public string LocationName { get; set; }
 
         public virtual Account Account { get; set; }
-        public virtual ICollection<Account> Accounts { get; set; }
-        public virtual ICollection<Booking> Bookings { get; set; }
     }
 }

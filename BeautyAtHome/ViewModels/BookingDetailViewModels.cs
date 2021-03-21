@@ -33,7 +33,7 @@ namespace BeautyAtHome.ViewModels
 
         //public virtual Booking Booking { get; set; }
         //public virtual Service Service { get; set; }
-        public virtual ICollection<FeedBackVM> FeedBacks { get; set; }
+        public FeedBackVM FeedBack { get; set; }
     }
 
     public class BookingDetailSM
