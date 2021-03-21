@@ -88,7 +88,7 @@ namespace BeautyAtHome.Controllers
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public ActionResult<IEnumerable<ServiceVM>> GetAllService([FromQuery] ServiceSM model, int pageSize, int pageIndex)
         {
-            IQueryable<Service> serviceList = _service.GetAll(s => s.ServiceType, s => s.Gallery, s => s.Account);
+            IQueryable<Service> serviceList = _service.GetAll(s => s.ServiceType, s => s.Gallery.Images, s => s.Account);
             if (!string.IsNullOrEmpty(model.Description))
             {
                 serviceList = serviceList.Where(s => s.Description.Contains(model.Description));
