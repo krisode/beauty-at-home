@@ -58,17 +58,7 @@ namespace BeautyAtHome.Controllers
             
             if (serviceSearch != null)
             {
-                var listBookingDetail = serviceSearch.BookingDetails;
-                List<FeedBackVM> listFeedback = new List<FeedBackVM>();
-
-                foreach (BookingDetail bd in listBookingDetail)
-                {
-                    var feedback = _feedbackService.GetAll().Where(f => f.BookingDetailId == bd.Id).ToList();
-                    bd.FeedBacks = feedback;
-                }
-
                 rtnService = _mapper.Map<ServicePagingSM>(serviceSearch);
-                
                 return Ok(rtnService);
             } else
             {

@@ -47,7 +47,7 @@ namespace BeautyAtHome.Controllers
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public ActionResult GetAccountById(int id)
         {
-            IQueryable<Account> accountList = _accountService.GetAll(s => s.DefaultAddress, s => s.Services, s => s.Gallery);
+            IQueryable<Account> accountList = _accountService.GetAll( s => s.Services, s => s.Gallery);
             Account account = accountList.FirstOrDefault(s => s.Id == id);
             AccountVM returnAccount = null;
             if (account != null)
@@ -84,7 +84,7 @@ namespace BeautyAtHome.Controllers
         {
             try
             {
-                IQueryable<Account> accountList = _accountService.GetAll(s => s.DefaultAddress, s => s.Services, s => s.Gallery);
+                IQueryable<Account> accountList = _accountService.GetAll(s => s.Services, s => s.Gallery);
 
                 if (!string.IsNullOrEmpty(account.Email))
                 {
@@ -112,10 +112,6 @@ namespace BeautyAtHome.Controllers
                     accountList = accountList.Where(s => s.GalleryId == account.GalleryId);
                 }
 
-                if (account.DefaultAddressId != 0)
-                {
-                    accountList = accountList.Where(s => s.DefaultAddressId == account.DefaultAddressId);
-                }
 
                 if (account.IsBeautyArtist != false)
                 {

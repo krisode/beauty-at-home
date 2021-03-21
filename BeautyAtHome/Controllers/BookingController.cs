@@ -167,13 +167,9 @@ namespace BeautyAtHome.Controllers
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public ActionResult<IEnumerable<BookingVM>> GetAllBooking([FromQuery] BookingSM model, int pageSize, int pageIndex)
         {
-            IQueryable<Booking> bookingList = _service.GetAll(s => s.BeautyArtistAccount, s => s.CustomerAccount, s => s.EndAddress, s => s.Gallery, s => s.BookingDetails);
+            IQueryable<Booking> bookingList = _service.GetAll(s => s.BeautyArtistAccount, s => s.CustomerAccount, s => s.BookingDetails);
 
-            if (!string.IsNullOrEmpty(model.BookingType))
-            {
-                bookingList = bookingList.Where(s => s.BookingType.Contains(s.BookingType));
-            }
-
+   
             if (!string.IsNullOrEmpty(model.Status))
             {
                 bookingList = bookingList.Where(s => s.Status.Contains(s.Status));
@@ -192,15 +188,7 @@ namespace BeautyAtHome.Controllers
             {
                 bookingList = bookingList.Where(s => s.BeautyArtistAccountId == model.BeautyArtistAccountId);
             }
-            if (model.EndAddressId > 0)
-            {
-                bookingList = bookingList.Where(s => s.EndAddressId == model.EndAddressId);
-            }
-
-            if (model.GalleryId > 0)
-            {
-                bookingList = bookingList.Where(s => s.GalleryId == model.GalleryId);
-            }
+        
 
             if (model.TotalFee > 0)
             {
