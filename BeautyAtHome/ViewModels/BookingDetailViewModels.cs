@@ -33,6 +33,7 @@ namespace BeautyAtHome.ViewModels
 
         //public virtual Booking Booking { get; set; }
         //public virtual Service Service { get; set; }
+        public BookingVM Booking { get; set; }
         public FeedBackVM FeedBack { get; set; }
     }
 
@@ -66,5 +67,13 @@ namespace BeautyAtHome.ViewModels
         //public virtual Booking Booking { get; set; }
         //public virtual Service Service { get; set; }
         //public virtual FeedBackVM FeedBack { get; set; }
+    }
+
+    public class BookingDetailForFeedbackVM
+    {
+        public int Id { get; set; }
+        public BookingForFeedbackVM Booking { get; set; }
+
+        public int ServiceId { get; set; }
     }
 }

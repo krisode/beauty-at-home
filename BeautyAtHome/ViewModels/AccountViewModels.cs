@@ -44,22 +44,25 @@ namespace BeautyAtHome.ViewModels
         public string Role { get; set; }
         public string Status { get; set; }
         public bool IsBeautyArtist { get; set; }
-
         public double RateScore { get; set; }
-
         public int TotalFeedback { get; set; }
-
         public ICollection<AddressPagingSM> Addresses { get; set; }
         public GalleryPagingSM Gallery { get; set; }
         public ICollection<ServiceVM> Services { get; set; }
         
-
     }
 
     public class AccountPagingSM
     {
         public int Id { get; set; }
         public string DisplayName { get; set; }
+    }
+
+    public class AccountWithImageVM
+    {
+        public int Id { get; set; }
+        public string DisplayName { get; set; }
+        public GalleryPagingSM Gallery { get; set; }
     }
 
 }

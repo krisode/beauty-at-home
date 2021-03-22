@@ -203,7 +203,7 @@ namespace BeautyAtHome.Controllers
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public ActionResult<IEnumerable<FeedBackVM>> GetAllFeedBack([FromQuery] FeedBackSM model, int pageSize, int pageIndex)
         {
-            IQueryable<FeedBack> feedBackList = _service.GetAll(s => s.BookingDetail, s => s.Gallery);
+            IQueryable<FeedBack> feedBackList = _service.GetAll(s => s.BookingDetail.Booking.CustomerAccount.Gallery.Images, s => s.Gallery);
 
             if (!string.IsNullOrEmpty(model.FeedbackContent))
             {
@@ -240,6 +240,10 @@ namespace BeautyAtHome.Controllers
                 feedBackList = feedBackList.Where(s => s.GalleryId == model.GalleryId);
             }
 
+            if (model.ServiceId > 0)
+            {
+                feedBackList = feedBackList.Where(s => s.BookingDetail.ServiceId == model.ServiceId);                
+            }
 
             if (pageSize == 0)
             {
