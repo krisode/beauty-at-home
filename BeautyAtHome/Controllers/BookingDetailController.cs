@@ -62,19 +62,6 @@ namespace BeautyAtHome.Controllers
 
             var rtnBookingDetail = _mapper.Map<BookingDetailVM>(bookingDetail);
 
-            /*try
-            {
-                bool result = await _service.Save();
-                if (!result)
-                {
-                    throw new DbUpdateConcurrencyException();
-                }
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                return BadRequest();
-            }*/
-
             return Ok(rtnBookingDetail);
         }
 
@@ -107,11 +94,7 @@ namespace BeautyAtHome.Controllers
         {
             //TODO: Implements Booking.GetById(int id) does not exist, return BadRequest()
 
-            //int quantity = 1;
-            //int bookingId = 1;
-            //int serviceId = 1;
-            //string serviceName = "Name Service";
-            //double servicePrice = 10.5;
+            
 
             BookingDetail crtBookingDetail = _mapper.Map<BookingDetail>(serviceModel);
 
@@ -184,7 +167,7 @@ namespace BeautyAtHome.Controllers
             }
             if (model.QuantityMax > 0)
             {
-                bookingDetailList = bookingDetailList.Where(s => s.Quantity >= model.QuantityMax);
+                bookingDetailList = bookingDetailList.Where(s => s.Quantity <= model.QuantityMax);
             }
 
             if (model.ServicePriceMin > 0)

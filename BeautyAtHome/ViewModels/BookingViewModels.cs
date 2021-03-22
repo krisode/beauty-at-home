@@ -10,15 +10,13 @@ namespace BeautyAtHome.ViewModels
     public class BookingCM
     {
         public string Status { get; set; }
-        //public DateTime CreateDate { get; set; }
         public int CustomerAccountId { get; set; }
         public int BeautyArtistAccountId { get; set; }
         public string Note { get; set; }
-        public string EndAddress { get; set; }
-       // public DateTime? UpdateDate { get; set; }
         public string BeginAddress { get; set; }
-        public double? TotalFee { get; set; }
-        public double? TransportFee { get; set; }
+        public string EndAddress { get; set; }
+        public double TotalFee { get; set; }
+        public double TransportFee { get; set; }
 
     }
     public class BookingVM
@@ -43,8 +41,8 @@ namespace BeautyAtHome.ViewModels
 
     public class BookingSM
     {
-        public string Status { get; set; }
         public int Id { get; set; }
+        public string Status { get; set; }
         public DateTime? CreateDateMin { get; set; }
         public DateTime? CreateDateMax { get; set; }
         public int CustomerAccountId { get; set; }
@@ -54,15 +52,16 @@ namespace BeautyAtHome.ViewModels
         public DateTime? UpdateDateMin { get; set; }
         public DateTime? UpdateDateMax { get; set; }
         public string BeginAddress { get; set; }
-        public double? TotalFee { get; set; }
-        public double? TransportFee { get; set; }
+        public double TotalFeeAtMin { get; set; }
+        public double TotalFeeAtMax { get; set; }
+        public double TransportFee { get; set; }
 
     }
 
     public class BookingUM
     {
-        public string Status { get; set; }
         public int Id { get; set; }
+        public string Status { get; set; }
 
     }
 }

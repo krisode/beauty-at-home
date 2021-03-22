@@ -38,13 +38,13 @@ namespace BeautyAtHome.ViewModels
 
     public class BookingDetailSM
     {
+        public int Id { get; set; }
         public int QuantityMin { get; set; }
         public int QuantityMax { get; set; }
-        public int Id { get; set; }
         public int BookingId { get; set; }
         public int ServiceId { get; set; }
-        public double? ServicePriceMin { get; set; }
-        public double? ServicePriceMax { get; set; }
+        public double ServicePriceMin { get; set; }
+        public double ServicePriceMax { get; set; }
         public string ServiceName { get; set; }
 
         //public virtual Booking Booking { get; set; }
