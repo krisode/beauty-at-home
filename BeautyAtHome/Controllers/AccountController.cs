@@ -49,7 +49,7 @@ namespace BeautyAtHome.Controllers
         [Produces("application/json")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public ActionResult GetAccountById(int id)
+        public ActionResult GetAccountById(int id, [FromQuery] bool withRateScore)
         {
             IQueryable<Account> accountList = _accountService.GetAll( s => s.Services, s => s.Gallery.Images, _ => _.Addresses);
             Account account = accountList.FirstOrDefault(s => s.Id == id);
@@ -57,10 +57,12 @@ namespace BeautyAtHome.Controllers
             if (account != null)
             {
                 returnAccount = _mapper.Map<AccountVM>(account);
-                var rating = _feedBackService.GetRateScoreByAccount(returnAccount.Id);
-                returnAccount.RateScore = rating[0];
-                returnAccount.TotalFeedback = (int)rating[1];
-
+                if (withRateScore)
+                {
+                    var rating = _feedBackService.GetRateScoreByAccount(returnAccount.Id);
+                    returnAccount.RateScore = rating[0];
+                    returnAccount.TotalFeedback = (int) rating[1];
+                }
                 return Ok(returnAccount);
             }
             else

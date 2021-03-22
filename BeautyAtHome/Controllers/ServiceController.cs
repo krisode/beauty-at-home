@@ -59,9 +59,12 @@ namespace BeautyAtHome.Controllers
             if (serviceSearch != null)
             {
                 rtnService = _mapper.Map<ServicePagingSM>(serviceSearch);
-                var rating = _feedbackService.GetRateScoreByService(rtnService.Id);
-                rtnService.RateScore = rating[0];
-                rtnService.TotalFeedback = (int)rating[1];
+                if (withRateScore)
+                {
+                    var rating = _feedbackService.GetRateScoreByService(rtnService.Id);
+                    rtnService.RateScore = rating[0];
+                    rtnService.TotalFeedback = (int)rating[1];
+                }
                 return Ok(rtnService);
             } else
             {
