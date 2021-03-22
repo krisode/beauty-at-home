@@ -1,5 +1,6 @@
 ﻿using ApplicationCore.Services;
 using AutoMapper;
+using BeautyAtHome.ExternalService;
 using BeautyAtHome.Utils;
 using BeautyAtHome.ViewModels;
 using Infrastructure.Contexts;
@@ -20,13 +21,19 @@ namespace BeautyAtHome.Controllers
         private readonly IMapper _mapper;
         private readonly IPagingSupport<Service> _pagingSupport;
         private readonly IFeedBackService _feedbackService;
+        private readonly IGalleryService _galleryService;
+        private readonly IImageService _imageService;
+        private readonly IUploadFileService _uploadFileService;
 
-        public ServiceController(IBeautyServicesService service, IMapper mapper, IPagingSupport<Service> pagingSupport, IFeedBackService feedbackService)
+        public ServiceController(IBeautyServicesService service, IMapper mapper, IPagingSupport<Service> pagingSupport, IFeedBackService feedbackService, IGalleryService galleryService, IImageService imageService, IUploadFileService uploadFileService)
         {
             _service = service;
             _mapper = mapper;
             _pagingSupport = pagingSupport;
             _feedbackService = feedbackService;
+            _galleryService = galleryService;
+            _imageService = imageService;
+            _uploadFileService = uploadFileService;
         }
 
 
@@ -207,7 +214,6 @@ namespace BeautyAtHome.Controllers
         ///         "salonId": 1,
         ///         "categoryId": 1,
         ///         "isServiceCombo": "True",
-        ///         "galleryId": 1
         ///     }
         ///
         /// </remarks>
@@ -220,16 +226,34 @@ namespace BeautyAtHome.Controllers
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<ActionResult<ServiceCM>> CreateService([FromBody] ServiceCM serviceModel)
+        public async Task<ActionResult<ServiceCM>> CreateService([FromForm] ServiceCM serviceModel)
         {
             //TODO: Implements AccountService.GetById(int id) does not exist, return BadRequest()
             //TODO: Implements ServiceTypeId.GetById(int id) does not exist, return BadRequest()
             //TODO: Implements GaleryId.GetById(int id) does not exist, return BadRequest()
 
+            
             DateTime crtDate = DateTime.Now;
             DateTime updDate = DateTime.Now;
             string status = Constants.Status.ACTIVE;
+            
+            // Initialize gallery
+            GalleryCM galleryCM = new GalleryCM();
+            galleryCM.Name = "Hình " + serviceModel.ServiceName;
+            galleryCM.Description = "Hình " + serviceModel.ServiceName; ;
 
+            // Add new gallery
+            Gallery gallery = _mapper.Map<Gallery>(galleryCM);
+            Gallery crtGallery = await _galleryService.AddAsync(gallery);
+            await _galleryService.Save();
+
+            ImageCM imageCM = new ImageCM();
+            imageCM.Description = "Hình " + serviceModel.ServiceName;
+            imageCM.GalleryId = crtGallery.Id;
+            imageCM.ImageUrl = await _uploadFileService.UploadFile("123456798", serviceModel.File, "service", "service-detail");
+
+            Image image = _mapper.Map<Image>(imageCM);
+            await _imageService.AddAsync(image);
 
             Service crtService = _mapper.Map<Service>(serviceModel);
 
@@ -240,7 +264,7 @@ namespace BeautyAtHome.Controllers
                 crtService.Status = status;
                 crtService.AccountId = serviceModel.AccountId;
                 crtService.ServiceTypeId = serviceModel.ServiceTypeId;
-                crtService.GalleryId = serviceModel.GalleryId;
+                crtService.GalleryId = crtGallery.Id;
 
                 await _service.AddAsync(crtService);
                 await _service.Save();

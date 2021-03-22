@@ -1,5 +1,6 @@
 ﻿
 using Infrastructure.Contexts;
+using Microsoft.AspNetCore.Http;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -14,8 +15,10 @@ namespace BeautyAtHome.ViewModels
         public int EstimateTime { get; set; }
         public int AccountId { get; set; }
         public int ServiceTypeId { get; set; }
-        public int GalleryId { get; set; }
+        /*public int GalleryId { get; set; }*/
         public string Summary { get; set; }
+
+        public IFormFile File { get; set; }
     }
     public class ServiceVM
     {
