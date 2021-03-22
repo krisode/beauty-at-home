@@ -14,6 +14,8 @@ namespace BeautyAtHome.ExternalService
     {
         public async Task<string> SendMessage(string title, string body, string topic, string imageUrl)
         {
+            var dict = new Dictionary<String, String >();
+            dict.Add("imageUrl", imageUrl);
             var message = new Message()
             {
                 Notification = new Notification()
@@ -22,7 +24,8 @@ namespace BeautyAtHome.ExternalService
                     Body = body,
                     ImageUrl = imageUrl
                 },
-                Topic = topic,
+                Topic = "/topics/" + topic,
+                Data = dict,
             };
             var messaging = FirebaseMessaging.DefaultInstance;
             return await messaging.SendAsync(message);

@@ -17,15 +17,19 @@ namespace BeautyAtHome.Controllers
     public class AccountController : ControllerBase
     {
         private readonly IAccountService _accountService;
+        private readonly IFeedBackService _feedBackService;
         private readonly IMapper _mapper;
         private readonly IPagingSupport<Account> _pagingSupport;
 
-        public AccountController(IAccountService accountService, IMapper mapper, IPagingSupport<Account> pagingSupport)
+        public AccountController(IAccountService accountService, IFeedBackService feedBackService, IMapper mapper, IPagingSupport<Account> pagingSupport)
         {
             _accountService = accountService;
+            _feedBackService = feedBackService;
             _mapper = mapper;
             _pagingSupport = pagingSupport;
         }
+
+
 
         /// <summary>
         /// Get a specific account by id
@@ -53,6 +57,10 @@ namespace BeautyAtHome.Controllers
             if (account != null)
             {
                 returnAccount = _mapper.Map<AccountVM>(account);
+                var rating = _feedBackService.GetRateScoreByAccount(returnAccount.Id);
+                returnAccount.RateScore = rating[0];
+                returnAccount.TotalFeedback = (int)rating[1];
+
                 return Ok(returnAccount);
             }
             else
@@ -80,7 +88,7 @@ namespace BeautyAtHome.Controllers
         [Produces("application/json")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public ActionResult<IEnumerable<AccountVM>> GetAllAccount([FromQuery] AccountSM account, int pageSize, int pageIndex)
+        public ActionResult<IEnumerable<AccountVM>> GetAllAccount([FromQuery] AccountSM account, int pageSize, int pageIndex, bool withRateScore)
         {
             try
             {
@@ -127,10 +135,21 @@ namespace BeautyAtHome.Controllers
                 {
                     pageIndex = 1;
                 }
+                
 
                 var pagedModel = _pagingSupport.From(accountList)
                     .GetRange(pageIndex, pageSize, s => s.Id)
                     .Paginate<AccountVM>();
+                if (withRateScore)
+                {
+                    pagedModel.Content = pagedModel.Content.AsEnumerable().Select<AccountVM, AccountVM>(_ => {
+                        var rating = _feedBackService.GetRateScoreByAccount(_.Id);
+                        _.RateScore = rating[0];
+                        _.TotalFeedback = (int) rating[1];
+                        return _;
+                    }).AsQueryable();
+                }
+
 
                 return Ok(pagedModel);
             }
