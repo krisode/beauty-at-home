@@ -229,9 +229,6 @@ namespace BeautyAtHome.Controllers
             DateTime crtDate = DateTime.Now;
             DateTime updDate = DateTime.Now;
             string status = Constants.Status.ACTIVE;
-            int accountId = 3;
-            int serviceTypeId = 1;
-            int galleryId = 1;
 
 
             Service crtService = _mapper.Map<Service>(serviceModel);
@@ -241,9 +238,9 @@ namespace BeautyAtHome.Controllers
                 crtService.CreatedDate = crtDate;
                 crtService.UpdatedDate = updDate;
                 crtService.Status = status;
-                crtService.AccountId = accountId;
-                crtService.ServiceTypeId = serviceTypeId;
-                crtService.GalleryId = galleryId;
+                crtService.AccountId = serviceModel.AccountId;
+                crtService.ServiceTypeId = serviceModel.ServiceTypeId;
+                crtService.GalleryId = serviceModel.GalleryId;
 
                 await _service.AddAsync(crtService);
                 await _service.Save();
@@ -278,10 +275,6 @@ namespace BeautyAtHome.Controllers
             {
                 return BadRequest();
             }
-
-            int accountId = 3;
-            int serviceTypeId = 1;
-            int galleryId = 1;
             
             try
             {
@@ -292,9 +285,9 @@ namespace BeautyAtHome.Controllers
                 serviceUpdated.EstimateTime = service.EstimateTime;
                 serviceUpdated.Status = service.Status;
                 serviceUpdated.UpdatedDate = DateTime.Now;
-                serviceUpdated.AccountId = accountId;
-                serviceUpdated.ServiceTypeId = serviceTypeId;
-                serviceUpdated.GalleryId = galleryId;
+                serviceUpdated.AccountId = (int) service.AccountId;
+                serviceUpdated.ServiceTypeId = (int) service.ServiceTypeId;
+                serviceUpdated.GalleryId = (int) service.GalleryId;
                 _service.Update(serviceUpdated);
                 await _service.Save();
             }

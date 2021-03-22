@@ -12,9 +12,9 @@ namespace BeautyAtHome.ViewModels
         public string ServiceName { get; set; }
         public decimal Price { get; set; }
         public int EstimateTime { get; set; }
-        public int? AccountId { get; set; }
+        public int AccountId { get; set; }
         public int ServiceTypeId { get; set; }
-        public int? GalleryId { get; set; }
+        public int GalleryId { get; set; }
         public string Summary { get; set; }
     }
     public class ServiceVM
@@ -62,10 +62,10 @@ namespace BeautyAtHome.ViewModels
         public string ServiceName { get; set; }
         public decimal Price { get; set; }
         public int EstimateTime { get; set; }
-        public long AccountId { get; set; }
-        public long ServiceTypeId { get; set; }
+        public int AccountId { get; set; }
+        public int ServiceTypeId { get; set; }
         public string Status { get; set; }
-        public long GalleryId { get; set; }
+        public int GalleryId { get; set; }
     }
 
     public class ServicePagingSM
