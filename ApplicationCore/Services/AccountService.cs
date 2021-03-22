@@ -49,7 +49,7 @@ namespace ApplicationCore.Services
 
         public Account GetByEmail(string email)
         {
-            return _iRepository.GetAll().Where(a => a.Email == email).FirstOrDefault();
+            return _iRepository.GetAll(_ => _.Gallery.Images, _ => _.Addresses).Where(a => a.Email == email).FirstOrDefault();
         }
 
         public IQueryable<Account> GetAll(params Expression<Func<Account, object>>[] includes)

@@ -74,6 +74,8 @@ namespace BeautyAtHome.ViewModels
         public string Description { get; set; }
         public string ServiceName { get; set; }
         public string Summary { get; set; }
+        public double RateScore { get; set; }
+        public double TotalFeedback { get; set; }
         public decimal Price { get; set; }
         public int EstimateTime { get; set; }
         public DateTime CreatedDate { get; set; }

@@ -1,4 +1,6 @@
-﻿namespace BeautyAtHome.ViewModels
+﻿using System.Collections.Generic;
+
+namespace BeautyAtHome.ViewModels
 {
     public class AuthCM
     {
@@ -13,5 +15,7 @@
         public string Role { get; set; }
         public string AccessToken { get; set; }
         public string ExpiresIn { get; set; }
+        public GalleryVM Gallery { get; set; }
+        public ICollection<AddressVM> Addresses { get; set; }
     }
 }
