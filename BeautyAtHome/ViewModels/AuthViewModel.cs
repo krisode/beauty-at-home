@@ -6,6 +6,7 @@ namespace BeautyAtHome.ViewModels
     {
         public string IdToken { get; set; }
         public string DisplayName { get; set; }
+        public string Avatar { get; set; }
     }
 
     public class AuthVM

@@ -21,6 +21,7 @@ namespace BeautyAtHome.Utils
             #region AutoMapper AccountViewModel
             CreateMap<Account, AccountPagingSM>();
             CreateMap<Account, AccountVM>();
+            CreateMap<Account, AccountWithImageVM>();
             CreateMap<AccountCM, Account>();
             #endregion
 
@@ -51,12 +52,14 @@ namespace BeautyAtHome.Utils
 
             #region AutoMapper BookingViewModel
             CreateMap<Booking, BookingVM>();
+            CreateMap<Booking, BookingForFeedbackVM>();
             CreateMap<BookingCM, Booking>();
             #endregion
 
             #region AutoMapper BookingDetailViewModel
             CreateMap<BookingDetail, BookingDetailVM>();
             CreateMap<BookingDetailCM, BookingDetail>();
+            CreateMap<BookingDetail, BookingDetailForFeedbackVM>();
             #endregion
 
             #region AutoMapper AddressViewModel

@@ -17,6 +17,7 @@ namespace BeautyAtHome.ViewModels
         public string EndAddress { get; set; }
         public double TotalFee { get; set; }
         public double TransportFee { get; set; }
+        public ICollection<BookingDetailCM> BookingDetails { get; set; }
 
     }
     public class BookingVM
@@ -25,8 +26,8 @@ namespace BeautyAtHome.ViewModels
         public int Id { get; set; }
         public string Status { get; set; }
         public DateTime CreateDate { get; set; }
-        public int CustomerAccountId { get; set; } 
-        public int BeautyArtistAccountId { get; set; } 
+        public AccountWithImageVM CustomerAccount { get; set; } 
+        public AccountWithImageVM BeautyArtistAccount { get; set; } 
         public string Note { get; set; } 
         public string EndAddress { get; set; } 
         public DateTime? UpdateDate { get; set; } 
@@ -63,5 +64,12 @@ namespace BeautyAtHome.ViewModels
         public int Id { get; set; }
         public string Status { get; set; }
 
+    }
+
+    public class BookingForFeedbackVM
+    {
+        public int Id { get; set; }
+
+        public AccountWithImageVM CustomerAccount { get; set; }
     }
 }

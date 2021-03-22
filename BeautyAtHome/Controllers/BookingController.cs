@@ -103,7 +103,6 @@ namespace BeautyAtHome.Controllers
             DateTime updateDate = DateTime.Now;
 
             Booking crtBooking = _mapper.Map<Booking>(serviceModel);
-
             try
             {
                 crtBooking.CreateDate = createDate;
@@ -142,8 +141,7 @@ namespace BeautyAtHome.Controllers
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public ActionResult<IEnumerable<BookingVM>> GetAllBooking([FromQuery] BookingSM model, int pageSize, int pageIndex, string sortOrder)
         {
-            IQueryable<Booking> bookingList = _service.GetAll(s => s.BeautyArtistAccount, s => s.CustomerAccount, s => s.BookingDetails);
-
+            IQueryable<Booking> bookingList = _service.GetAll(s => s.BeautyArtistAccount.Gallery.Images, s => s.CustomerAccount.Gallery.Images, s => s.BookingDetails);
 
             if (!string.IsNullOrEmpty(model.Status))
             {
