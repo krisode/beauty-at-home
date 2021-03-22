@@ -1,4 +1,5 @@
 ﻿using ApplicationCore.Services;
+using AutoMapper;
 using BeautyAtHome.ExternalService;
 using BeautyAtHome.Utils;
 using BeautyAtHome.ViewModels;
@@ -22,13 +23,15 @@ namespace BeautyAtHome.Controllers
         private readonly IJwtTokenProvider _jwtTokenProvider;
         private readonly IUploadFileService _uploadFileService;
         private readonly IPushNotificationService _pushNotificationService;
+        private readonly IMapper _mapper;
 
-        public AuthController(IAccountService accountService, IJwtTokenProvider jwtTokenProvider, IUploadFileService uploadFileService, IPushNotificationService pushNotificationService)
+        public AuthController(IAccountService accountService, IJwtTokenProvider jwtTokenProvider, IUploadFileService uploadFileService, IPushNotificationService pushNotificationService, IMapper mapper)
         {
             _accountService = accountService;
             _jwtTokenProvider = jwtTokenProvider;
             _uploadFileService = uploadFileService;
             _pushNotificationService = pushNotificationService;
+            _mapper = mapper;
         }
 
         [HttpPost("upload-image-flutter")]
@@ -52,7 +55,7 @@ namespace BeautyAtHome.Controllers
         [ProducesResponseType(StatusCodes.Status200OK)]
         public async Task<ActionResult> testPush()
         {
-            var task = await _pushNotificationService.SendMessage("Hello Trang", "Bạn đã nhận được đơn hàng.\nMakeup - Làm tóc xoăn tự nhiên", "Randomizer", @"https://paulaschoice.vn/wp-content/uploads/2019/08/nguyen-tac-make-up.jpg");
+            var task = await _pushNotificationService.SendMessage("Đơn của bạn đã được chấp nhận", "Makeup - Làm tóc xoăn tự nhiên", "Randomizer", @"https://techkalzen.com/wp-content/uploads/2020/02/tron-bo-nhung-hinh-anh-dep-buon-mang-tam-trang-suy-tu-1.jpg");
             return Ok(task);
         }
 
@@ -63,21 +66,22 @@ namespace BeautyAtHome.Controllers
         [ProducesResponseType(StatusCodes.Status200OK)]
         public async Task<ActionResult> LoginAccount([FromBody] AuthCM authCM)
         {
-            var auth = FirebaseAdmin.Auth.FirebaseAuth.DefaultInstance;
-            string email;
-            try
-            {
-                var token  = await auth.VerifyIdTokenAsync(authCM.IdToken);
-                email = (string) token.Claims[TokenClaims.EMAIL];
-            }
-            catch (Exception e)
-            {
-                return Unauthorized(e.Message);
-            }
+            //var auth = FirebaseAdmin.Auth.FirebaseAuth.DefaultInstance;
+            //string email;
+            //try
+            //{
+            //    var token = await auth.VerifyIdTokenAsync(authCM.IdToken);
+            //    email = (string)token.Claims[TokenClaims.EMAIL];
+            //}
+            //catch (Exception e)
+            //{
+            //    return Unauthorized(e.Message);
+            //}
 
             AuthVM response;
             try
             {
+                string email = "maiquynhanh@gmail.com";
                 Account accountCreated = _accountService.GetByEmail(email);
                 
                 if (accountCreated == null)
@@ -102,7 +106,8 @@ namespace BeautyAtHome.Controllers
                     DisplayName = accountCreated.DisplayName,
                     Role = accountCreated.Role,
                     AccessToken = accessToken,
-                    ExpiresIn = Constants.EXPIRES_IN_DAY
+                    ExpiresIn = Constants.EXPIRES_IN_DAY,
+                    Gallery = _mapper.Map<GalleryVM>(accountCreated.Gallery)
                 };
             }
             catch (Exception e)
