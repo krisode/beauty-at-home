@@ -22,14 +22,15 @@ namespace BeautyAtHome.ViewModels
         public double RateScore { get; set; }
         public int BookingDetailId { get; set; }
         public GalleryVM Gallery { get; set; }
+        public BookingDetailForFeedbackVM BookingDetail{ get; set; }
         public string FeedbackContent { get; set; }
         public DateTime CreateDate { get; set; }
-
     }
 
     public class FeedBackSM
     {
         //public int Id { get; set; } // k search feedBack theo ID
+        public int ServiceId { get; set; }
         public double RateScoreMin { get; set; }
         public double RateScoreMax { get; set; }
         public int BookingDetailId { get; set; }
