@@ -125,7 +125,6 @@ namespace BeautyAtHome.Controllers
         ///     {
         ///         "name": "Gallery's name",
         ///         "description": "Gallery's description",    
-        ///         "defaultImageId": 1
         ///     }
         ///
         /// </remarks>
