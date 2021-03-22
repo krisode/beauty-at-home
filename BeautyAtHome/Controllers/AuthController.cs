@@ -66,22 +66,22 @@ namespace BeautyAtHome.Controllers
         [ProducesResponseType(StatusCodes.Status200OK)]
         public async Task<ActionResult> LoginAccount([FromBody] AuthCM authCM)
         {
-            //var auth = FirebaseAdmin.Auth.FirebaseAuth.DefaultInstance;
-            //string email;
-            //try
-            //{
-            //    var token = await auth.VerifyIdTokenAsync(authCM.IdToken);
-            //    email = (string)token.Claims[TokenClaims.EMAIL];
-            //}
-            //catch (Exception e)
-            //{
-            //    return Unauthorized(e.Message);
-            //}
+            var auth = FirebaseAdmin.Auth.FirebaseAuth.DefaultInstance;
+            string email;
+            try
+            {
+                var token = await auth.VerifyIdTokenAsync(authCM.IdToken);
+                email = (string)token.Claims[TokenClaims.EMAIL];
+            }
+            catch (Exception e)
+            {
+                return Unauthorized(e.Message);
+            }
 
             AuthVM response;
             try
             {
-                string email = "maiquynhanh@gmail.com";
+                //string email = "maiquynhanh@gmail.com";
                 Account accountCreated = _accountService.GetByEmail(email);
                 
                 if (accountCreated == null)
