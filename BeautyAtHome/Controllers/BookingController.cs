@@ -48,7 +48,7 @@ namespace BeautyAtHome.Controllers
         /*[SwaggerResponseExample(StatusCodes.Status200OK, typeof (ApplicationCore.DTOs.Booking))]*/
         [ProducesResponseType(StatusCodes.Status404NotFound)]
 
-        public async Task<ActionResult<BookingVM>> GetBookingById(int id)
+        public ActionResult<BookingVM> GetBookingById(int id)
         {
 
             IQueryable<Booking> bookingList = _service.GetAll(s => s.BeautyArtistAccount, s => s.CustomerAccount, s => s.BookingDetails);
@@ -60,19 +60,6 @@ namespace BeautyAtHome.Controllers
             }
 
             var rtnBooking = _mapper.Map<BookingVM>(booking);
-
-            /*try
-            {
-                bool result = await _service.Save();
-                if (!result)
-                {
-                    throw new DbUpdateConcurrencyException();
-                }
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                return BadRequest();
-            }*/
 
             return Ok(rtnBooking);
         }
@@ -114,26 +101,13 @@ namespace BeautyAtHome.Controllers
 
             DateTime createDate = DateTime.Now;
             DateTime updateDate = DateTime.Now;
-            
 
-            /*string bookingType = "";
-            string status = "Active";
-            int customerAccountId = 1;
-            int beautyArtistAccountId = 1;
-            string note = "";
-            int endAddressId = 1;
-            int galleryId = 1;
-            int beginAddressId = 1;
-            double totalFee = 10.5;
-            double transportFee = 3.0;*/
             Booking crtBooking = _mapper.Map<Booking>(serviceModel);
 
             try
             {
                 crtBooking.CreateDate = createDate;
                 crtBooking.UpdateDate = updateDate;
-                //crtFeedback.BookingDetail = bookingDetail;
-                //crtFeedback.Gallery = gallery;
 
                 await _service.AddAsync(crtBooking);
                 await _service.Save();
@@ -166,18 +140,18 @@ namespace BeautyAtHome.Controllers
         [Produces("application/json")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public ActionResult<IEnumerable<BookingVM>> GetAllBooking([FromQuery] BookingSM model, int pageSize, int pageIndex)
+        public ActionResult<IEnumerable<BookingVM>> GetAllBooking([FromQuery] BookingSM model, int pageSize, int pageIndex, string sortOrder)
         {
             IQueryable<Booking> bookingList = _service.GetAll(s => s.BeautyArtistAccount, s => s.CustomerAccount, s => s.BookingDetails);
 
-   
+
             if (!string.IsNullOrEmpty(model.Status))
             {
-                bookingList = bookingList.Where(s => s.Status.Contains(s.Status));
-            }           
+                bookingList = bookingList.Where(s => s.Status == model.Status);
+            }
             if (!string.IsNullOrEmpty(model.Note))
             {
-                bookingList = bookingList.Where(s => s.Note.Contains(s.Note));
+                bookingList = bookingList.Where(s => s.Note == model.Note);
             }
 
             if (model.CustomerAccountId > 0)
@@ -189,11 +163,15 @@ namespace BeautyAtHome.Controllers
             {
                 bookingList = bookingList.Where(s => s.BeautyArtistAccountId == model.BeautyArtistAccountId);
             }
-        
 
-            if (model.TotalFee > 0)
+            if (model.TotalFeeAtMin > 0)
             {
-                bookingList = bookingList.Where(s => s.TotalFee >= model.TotalFee); 
+                bookingList = bookingList.Where(s => s.TotalFee >= model.TotalFeeAtMin);
+            }
+
+            if (model.TotalFeeAtMax > 0)
+            {
+                bookingList = bookingList.Where(s => s.TotalFee >= model.TotalFeeAtMax);
             }
 
             if (model.CreateDateMin.HasValue)
@@ -215,7 +193,6 @@ namespace BeautyAtHome.Controllers
                 bookingList = bookingList.Where(s => s.UpdateDate <= model.UpdateDateMax);
             }
 
-
             if (pageSize == 0)
             {
                 pageSize = 20;
@@ -227,7 +204,7 @@ namespace BeautyAtHome.Controllers
             }
 
             var pagedModel = _pagingSupport.From(bookingList)
-                .GetRange(pageIndex, pageSize, s => s.Id)
+                .GetRange(pageIndex, pageSize, _ => _.UpdateDate)
                 .Paginate<BookingVM>();
 
             return Ok(pagedModel);
@@ -296,7 +273,7 @@ namespace BeautyAtHome.Controllers
             {
                 bookingUpdated.Id = booking.Id;
                 bookingUpdated.Status = booking.Status;
-                bookingUpdated.UpdateDate =  DateTime.Now;
+                bookingUpdated.UpdateDate = DateTime.Now;
 
                 _service.Update(bookingUpdated);
                 await _service.Save();

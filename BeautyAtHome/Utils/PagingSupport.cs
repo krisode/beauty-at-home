@@ -59,7 +59,7 @@ namespace BeautyAtHome.Utils
         {
             _pageIndex = pageIndex;
             _pageSize = pageSize;
-            _sourcePageSize = _source.OrderBy(selector).Skip((pageIndex - 1) * pageSize).Take(pageSize);
+            _sourcePageSize = _source.OrderByDescending(selector).Skip((pageIndex - 1) * pageSize).Take(pageSize);
             return this;
         }
 
