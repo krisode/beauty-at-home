@@ -99,9 +99,23 @@ namespace BeautyAtHome.Controllers
         [Produces("application/json")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public ActionResult<IEnumerable<ServiceVM>> GetAllService([FromQuery] ServiceSM model, int pageSize, int pageIndex, bool withRateScore)
+        public ActionResult<IEnumerable<ServiceVM>> GetAllService([FromQuery] ServiceSM model, int pageSize, int pageIndex, bool withRateScore, string searchQuery)
         {
             IQueryable<Service> serviceList = _service.GetAll(s => s.ServiceType, s => s.Gallery.Images, s => s.Account);
+            IQueryable<Service> serviceBasedOnSearchQuery;
+            IQueryable<Service> result = null;
+            if (!string.IsNullOrEmpty(searchQuery))
+            {
+                var serviceByServiceName = serviceList.Where(_ => _.ServiceName.Contains(searchQuery));
+                var serviceByProviderName = serviceList.Where(_ => _.Account.DisplayName.Contains(searchQuery));
+                var serviceByServiceTypeName = serviceList.Where(_ => _.ServiceType.Name.Contains(searchQuery));
+
+                serviceBasedOnSearchQuery = Queryable.Concat(serviceByServiceName, serviceByProviderName);
+                result = Queryable.Concat(serviceBasedOnSearchQuery, serviceByServiceTypeName);
+            }
+            
+
+
             if (!string.IsNullOrEmpty(model.Description))
             {
                 serviceList = serviceList.Where(s => s.Description.Contains(model.Description));
@@ -182,9 +196,18 @@ namespace BeautyAtHome.Controllers
                 pageIndex = 1;
             }
 
-            var pagedModel = _pagingSupport.From(serviceList)
+            Paged<ServicePagingSM> pagedModel = null;
+            if(string.IsNullOrEmpty(searchQuery))
+            {
+                pagedModel = _pagingSupport.From(serviceList)
                 .GetRange(pageIndex, pageSize, s => s.Id)
                 .Paginate<ServicePagingSM>();
+            } else
+            {
+                pagedModel = _pagingSupport.From(result.Distinct())
+                .GetRange(pageIndex, pageSize, s => s.UpdatedDate)
+                .Paginate<ServicePagingSM>();
+            }
 
             if (withRateScore)
             {
