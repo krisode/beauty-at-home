@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.AspNetCore.Http;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -29,9 +30,11 @@ namespace BeautyAtHome.ViewModels
 
     public class AccountUM
     {
+        public int Id { get; set; }
         public string DisplayName { get; set; }
         public string Phone { get; set; }
         public string Status { get; set; }
+        public IFormFile File { get; set; }
 
     }
 
