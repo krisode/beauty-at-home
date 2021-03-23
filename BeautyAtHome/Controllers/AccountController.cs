@@ -236,7 +236,6 @@ namespace BeautyAtHome.Controllers
         /// <summary>
         /// Update account with specified id
         /// </summary>
-        /// <param name="id">Account's id</param>
         /// <param name="accountUM">Information applied to updated account</param>
         /// <response code="204">Update account successfully</response>
         /// <response code="400">Account's id does not exist or does not match with the id in parameter</response>

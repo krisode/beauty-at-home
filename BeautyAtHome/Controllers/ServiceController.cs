@@ -310,6 +310,7 @@ namespace BeautyAtHome.Controllers
                 serviceUpdated.Id = service.Id;
                 serviceUpdated.Description = service.Description;
                 serviceUpdated.ServiceName = service.ServiceName;
+                serviceUpdated.Summary = service.Summary;
                 serviceUpdated.Price = service.Price;
                 serviceUpdated.EstimateTime = service.EstimateTime;
                 serviceUpdated.Status = service.Status;

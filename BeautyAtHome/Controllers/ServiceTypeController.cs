@@ -12,7 +12,7 @@ using System.Threading.Tasks;
 
 namespace BeautyAtHome.Controllers
 {
-    [Route("api/v1.0/servicetypes")]
+    [Route("api/v1.0/service-types")]
     [ApiController]
     public class ServiceTypeController : ControllerBase
     {
