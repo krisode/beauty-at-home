@@ -239,8 +239,8 @@ namespace BeautyAtHome.Controllers
             
             // Initialize gallery
             GalleryCM galleryCM = new GalleryCM();
-            galleryCM.Name = "Hình " + serviceModel.ServiceName;
-            galleryCM.Description = "Hình " + serviceModel.ServiceName; ;
+            galleryCM.Name = "Hình " + serviceModel.ServiceName.ToLower();
+            galleryCM.Description = "Hình " + serviceModel.ServiceName.ToLower(); ;
 
             // Add new gallery
             Gallery gallery = _mapper.Map<Gallery>(galleryCM);
@@ -281,7 +281,6 @@ namespace BeautyAtHome.Controllers
         /// <summary>
         /// Update service with specified id
         /// </summary>
-        /// <param name="id">Service's id</param>
         /// <param name="service">Information applied to updated service</param>
         /// <response code="204">Update service successfully</response>
         /// <response code="400">Service's id does not exist or does not match with the id in parameter</response>
@@ -292,14 +291,20 @@ namespace BeautyAtHome.Controllers
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<ActionResult> PutService(int id, [FromBody] ServiceUM service)
+        public async Task<ActionResult> PutService([FromForm] ServiceUM service)
         {
-            Service serviceUpdated = await _service.GetByIdAsync(id);
-            if (serviceUpdated == null || id != service.Id)
-            {
-                return BadRequest();
-            }
-            
+            var serviceList = _service.GetAll(_ => _.Gallery.Images);
+
+            Service serviceUpdated = serviceList.FirstOrDefault(_ => _.Id == service.Id);
+
+            Image imageUpdated = serviceUpdated.Gallery.Images.First();
+            imageUpdated.Description = "Hình " + service.ServiceName.ToLower();
+            imageUpdated.ImageUrl = await _uploadFileService.UploadFile("123456798", service.File, "service", "service-detail");
+            imageUpdated.GalleryId = (int) service.GalleryId;
+
+            _imageService.Update(imageUpdated);
+            await _imageService.Save();
+
             try
             {
                 serviceUpdated.Id = service.Id;

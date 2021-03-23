@@ -58,7 +58,6 @@ namespace BeautyAtHome.ViewModels
 
     public class ServiceUM
     {
-        [Required]
         public int Id { get; set; }
         public string Description { get; set; }
         public string Summary { get; set; }
@@ -69,6 +68,7 @@ namespace BeautyAtHome.ViewModels
         public int ServiceTypeId { get; set; }
         public string Status { get; set; }
         public int GalleryId { get; set; }
+        public IFormFile File { get; set; }
     }
 
     public class ServicePagingSM
