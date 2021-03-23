@@ -39,7 +39,7 @@ namespace BeautyAtHome.ExternalService
             string fileName = guid.ToString() + "." + fileExtension;
             return await task.Child(bucket)
                 .Child(directory)
-                .Child(fileExtension)
+                .Child(fileName)
                 .PutAsync(file.OpenReadStream());
         }
     }
