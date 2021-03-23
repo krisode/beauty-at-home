@@ -13,7 +13,7 @@ using System.Threading.Tasks;
 namespace BeautyAtHome.Controllers
 {
     [ApiController]
-    [Route("api/v1.0/bookingDetails")]
+    [Route("api/v1.0/booking-details")]
     public class BookingDetailController : ControllerBase
     {
 
