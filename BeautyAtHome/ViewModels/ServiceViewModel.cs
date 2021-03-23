@@ -35,6 +35,8 @@ namespace BeautyAtHome.ViewModels
         public int AccountId { get; set; }
         public string Status { get; set; }
         public int GalleryId { get; set; }
+
+        public GalleryVM Gallery { get; set; }
     }
 
     public class ServiceSM

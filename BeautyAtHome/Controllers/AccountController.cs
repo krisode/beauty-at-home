@@ -20,19 +20,23 @@ namespace BeautyAtHome.Controllers
         private readonly IAccountService _accountService;
         private readonly IFeedBackService _feedBackService;
         private readonly IImageService _imageService;
+        private readonly IGalleryService _galleryService;
         private readonly IUploadFileService _uploadFileService;
         private readonly IMapper _mapper;
         private readonly IPagingSupport<Account> _pagingSupport;
 
-        public AccountController(IAccountService accountService, IFeedBackService feedBackService, IMapper mapper, IPagingSupport<Account> pagingSupport, IImageService imageService, IUploadFileService uploadFileService)
+        public AccountController(IAccountService accountService, IFeedBackService feedBackService, IImageService imageService, IGalleryService galleryService, IUploadFileService uploadFileService, IMapper mapper, IPagingSupport<Account> pagingSupport)
         {
             _accountService = accountService;
             _feedBackService = feedBackService;
+            _imageService = imageService;
+            _galleryService = galleryService;
+            _uploadFileService = uploadFileService;
             _mapper = mapper;
             _pagingSupport = pagingSupport;
-            _imageService = imageService;
-            _uploadFileService = uploadFileService;
         }
+
+
 
 
 
@@ -56,7 +60,10 @@ namespace BeautyAtHome.Controllers
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public ActionResult GetAccountById(int id, [FromQuery] bool withRateScore)
         {
-            IQueryable<Account> accountList = _accountService.GetAll( s => s.Services, s => s.Gallery.Images, _ => _.Addresses);
+            IQueryable<Account> accountList = _accountService.GetAll( 
+                s => s.Services,  
+                s => s.Gallery.Images, 
+                _ => _.Addresses);
             Account account = accountList.FirstOrDefault(s => s.Id == id);
             AccountVM returnAccount = null;
             if (account != null)
@@ -99,7 +106,11 @@ namespace BeautyAtHome.Controllers
         {
             try
             {
-                IQueryable<Account> accountList = _accountService.GetAll(s => s.Services, s => s.Gallery.Images, _ => _.Addresses);
+                IQueryable<Account> accountList = _accountService.GetAll(
+                    s => s.Services, 
+                    s => s.Gallery.Images, 
+                    _ => _.Addresses
+                );
 
                 if (!string.IsNullOrEmpty(account.Email))
                 {
@@ -147,12 +158,25 @@ namespace BeautyAtHome.Controllers
                 var pagedModel = _pagingSupport.From(accountList)
                     .GetRange(pageIndex, pageSize, s => s.Id)
                     .Paginate<AccountVM>();
+
+
                 if (withRateScore)
                 {
                     pagedModel.Content = pagedModel.Content.AsEnumerable().Select<AccountVM, AccountVM>(_ => {
                         var rating = _feedBackService.GetRateScoreByAccount(_.Id);
                         _.RateScore = rating[0];
                         _.TotalFeedback = (int) rating[1];
+                        List<ServiceVM> services = new List<ServiceVM>();
+                        foreach (ServiceVM service in _.Services)
+                        {
+                            Gallery gallery = _galleryService
+                                .GetAll(_ => _.Images)
+                                .Where(_ => _.Id == service.GalleryId).FirstOrDefault();
+                            GalleryVM galleryVM = _mapper.Map<GalleryVM>(gallery);
+                            service.Gallery = galleryVM;
+                            services.Add(service);
+                        }
+                        _.Services = services;
                         return _;
                     }).AsQueryable();
                 }
