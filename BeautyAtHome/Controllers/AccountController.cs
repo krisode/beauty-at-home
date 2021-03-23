@@ -1,5 +1,6 @@
 ﻿using ApplicationCore.Services;
 using AutoMapper;
+using BeautyAtHome.ExternalService;
 using BeautyAtHome.Utils;
 using BeautyAtHome.ViewModels;
 using Infrastructure.Contexts;
@@ -18,15 +19,19 @@ namespace BeautyAtHome.Controllers
     {
         private readonly IAccountService _accountService;
         private readonly IFeedBackService _feedBackService;
+        private readonly IImageService _imageService;
+        private readonly IUploadFileService _uploadFileService;
         private readonly IMapper _mapper;
         private readonly IPagingSupport<Account> _pagingSupport;
 
-        public AccountController(IAccountService accountService, IFeedBackService feedBackService, IMapper mapper, IPagingSupport<Account> pagingSupport)
+        public AccountController(IAccountService accountService, IFeedBackService feedBackService, IMapper mapper, IPagingSupport<Account> pagingSupport, IImageService imageService, IUploadFileService uploadFileService)
         {
             _accountService = accountService;
             _feedBackService = feedBackService;
             _mapper = mapper;
             _pagingSupport = pagingSupport;
+            _imageService = imageService;
+            _uploadFileService = uploadFileService;
         }
 
 
@@ -217,16 +222,28 @@ namespace BeautyAtHome.Controllers
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<ActionResult> PutAccount(int id, [FromBody] AccountUM accountUM)
+        public async Task<ActionResult> PutAccount([FromForm] AccountUM accountUM)
         {
-            Account accountUpdated = await _accountService.GetByIdAsync(id);
+            /*Account accountUpdated = await _accountService.GetByIdAsync(id);*/
+            var accountList = _accountService.GetAll(_ => _.Gallery.Images);
+            Account account = accountList.FirstOrDefault(_ => _.Id == accountUM.Id);
+
+            ImageUM imageUM = new ImageUM();
+            imageUM.Id = account.Gallery.Images.First().Id;
+            imageUM.Description = "Hình " + account.DisplayName;
+            imageUM.ImageUrl = await _uploadFileService.UploadFile("123456798", accountUM.File, "service", "service-detail");
+            imageUM.GalleryId = (int) account.GalleryId;
+
+            Image image = _mapper.Map<Image>(imageUM);
+            _imageService.Update(image);
+
             try
             {
-                accountUpdated.DisplayName = accountUM.DisplayName;
-                accountUpdated.Phone = accountUM.Phone;
-                accountUpdated.Status = accountUM.Status;
+                account.DisplayName = accountUM.DisplayName;
+                account.Phone = accountUM.Phone;
+                account.Status = accountUM.Status;
 
-                _accountService.Update(accountUpdated);
+                _accountService.Update(account);
                 await _accountService.Save();
             }
             catch (Exception e)
@@ -234,7 +251,7 @@ namespace BeautyAtHome.Controllers
                 return BadRequest(e);
             }
 
-            return Ok(accountUpdated);
+            return Ok(account);
         }
 
         /// <summary>
