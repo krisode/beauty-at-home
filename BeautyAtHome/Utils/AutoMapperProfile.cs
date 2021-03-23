@@ -36,6 +36,7 @@ namespace BeautyAtHome.Utils
             CreateMap<Image, ImageDefaultPagingSM>();
             CreateMap<ImageCM, Image>();
             CreateMap<Image, ImageVM>();
+            CreateMap<ImageUM, Image>();
             #endregion
 
             #region AutoMapper ServiceTypeViewModel
