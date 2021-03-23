@@ -56,7 +56,13 @@ namespace BeautyAtHome.Controllers
         public ActionResult<BookingVM> GetBookingById(int id)
         {
 
-            IQueryable<Booking> bookingList = _service.GetAll(s => s.BeautyArtistAccount.Gallery.Images, s => s.CustomerAccount, s => s.BookingDetails, _ => _.CustomerAccount.Addresses);
+            IQueryable<Booking> bookingList = _service.GetAll(
+                s => s.BeautyArtistAccount.Gallery.Images, 
+                s => s.CustomerAccount, 
+                s => s.BookingDetails, _ => _.CustomerAccount.Addresses,
+                _ => _.BeautyArtistAccount,
+                _ => _.BookingDetails
+                );
             var booking = bookingList.FirstOrDefault(_ => _.Id == id);
 
             if (booking == null)
