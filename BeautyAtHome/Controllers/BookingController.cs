@@ -1,5 +1,6 @@
 ﻿using ApplicationCore.Services;
 using AutoMapper;
+using BeautyAtHome.ExternalService;
 using BeautyAtHome.Utils;
 using BeautyAtHome.ViewModels;
 using Infrastructure.Contexts;
@@ -20,13 +21,17 @@ namespace BeautyAtHome.Controllers
         private readonly IBookingService _service;
         private readonly IMapper _mapper;
         private readonly IPagingSupport<Booking> _pagingSupport;
+        private readonly IPushNotificationService _pushNotificationService;
 
-        public BookingController(IBookingService service, IMapper mapper, IPagingSupport<Booking> pagingSupport)
+        public BookingController(IBookingService service, IMapper mapper, IPagingSupport<Booking> pagingSupport, IPushNotificationService pushNotificationService)
         {
             _service = service;
             _mapper = mapper;
             _pagingSupport = pagingSupport;
+            _pushNotificationService = pushNotificationService;
         }
+
+
 
         /// <summary>
         /// Get a specific booking by bookingId
@@ -51,7 +56,7 @@ namespace BeautyAtHome.Controllers
         public ActionResult<BookingVM> GetBookingById(int id)
         {
 
-            IQueryable<Booking> bookingList = _service.GetAll(s => s.BeautyArtistAccount.Gallery.Images, s => s.CustomerAccount, s => s.BookingDetails);
+            IQueryable<Booking> bookingList = _service.GetAll(s => s.BeautyArtistAccount.Gallery.Images, s => s.CustomerAccount, s => s.BookingDetails, _ => _.CustomerAccount.Addresses);
             var booking = bookingList.FirstOrDefault(_ => _.Id == id);
 
             if (booking == null)
@@ -107,16 +112,15 @@ namespace BeautyAtHome.Controllers
             {
                 crtBooking.CreateDate = createDate;
                 crtBooking.UpdateDate = updateDate;
-
+                crtBooking.Status = "Mới";
                 await _service.AddAsync(crtBooking);
                 await _service.Save();
 
             }
-            catch (Exception)
+            catch (Exception e)
             {
                 return StatusCode(StatusCodes.Status500InternalServerError);
             }
-
             return CreatedAtAction("GetBookingById", new { id = crtBooking.Id }, crtBooking);
         }
 
@@ -261,7 +265,10 @@ namespace BeautyAtHome.Controllers
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<ActionResult> PutBooking(int id, [FromBody] BookingUM booking)
         {
-            Booking bookingUpdated = await _service.GetByIdAsync(id);
+            Booking bookingUpdated = _service.GetAll(_ => _.BeautyArtistAccount)
+                .Where(_ => _.Id == id)
+                .FirstOrDefault();
+            
             if (bookingUpdated == null || id != booking.Id)
             {
                 return BadRequest();
@@ -269,12 +276,20 @@ namespace BeautyAtHome.Controllers
 
             try
             {
-                bookingUpdated.Id = booking.Id;
                 bookingUpdated.Status = booking.Status;
                 bookingUpdated.UpdateDate = DateTime.Now;
-
+                var data = new Dictionary<String, String>();
+                
                 _service.Update(bookingUpdated);
                 await _service.Save();
+                data.Add("notiType", "booking_changed");
+                data.Add("bookingStatus", bookingUpdated.Status);
+                string msg = await _pushNotificationService.SendMessage(
+                    "Đơn hàng của bạn đang được xử lý",
+                    "Đơn hàng của bạn từ " + bookingUpdated.BeautyArtistAccount.DisplayName,
+                    "booking_changed_id_" + bookingUpdated.Id,
+                    data
+                    );
             }
             catch (Exception e)
             {

@@ -55,8 +55,8 @@ namespace BeautyAtHome.Controllers
         [ProducesResponseType(StatusCodes.Status200OK)]
         public async Task<ActionResult> testPush()
         {
-            var task = await _pushNotificationService.SendMessage("Đơn của bạn đã được chấp nhận", "Makeup - Làm tóc xoăn tự nhiên", "Randomizer", @"https://techkalzen.com/wp-content/uploads/2020/02/tron-bo-nhung-hinh-anh-dep-buon-mang-tam-trang-suy-tu-1.jpg");
-            return Ok(task);
+            //var task = await _pushNotificationService.SendMessage("Đơn của bạn đã được chấp nhận", "Makeup - Làm tóc xoăn tự nhiên", "Randomizer", @"https://techkalzen.com/wp-content/uploads/2020/02/tron-bo-nhung-hinh-anh-dep-buon-mang-tam-trang-suy-tu-1.jpg");
+            return Ok("test");
         }
 
 

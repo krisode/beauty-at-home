@@ -8,24 +8,22 @@ namespace BeautyAtHome.ExternalService
 {
     public interface IPushNotificationService
     {
-        Task<string> SendMessage(string title, string body, string topic, string imageUrl);   
+        Task<string> SendMessage(string title, string body, string topic, Dictionary<String, String> additionalDatas);   
     }
     public class PushNotificationService : IPushNotificationService
     {
-        public async Task<string> SendMessage(string title, string body, string topic, string imageUrl)
+        public async Task<string> SendMessage(string title, string body, string topic, Dictionary<String, String> additionalDatas)
         {
-            var dict = new Dictionary<String, String >();
-            dict.Add("imageUrl", imageUrl);
             var message = new Message()
             {
                 Notification = new Notification()
                 {
                     Title = title,
                     Body = body,
-                    ImageUrl = imageUrl
+                    ImageUrl = "https://png.pngtree.com/element_our/20190530/ourlarge/pngtree-520-couple-avatar-boy-avatar-little-dinosaur-cartoon-cute-image_1263411.jpg",
                 },
                 Topic = "/topics/" + topic,
-                Data = dict,
+                Data = additionalDatas,
             };
             var messaging = FirebaseMessaging.DefaultInstance;
             return await messaging.SendAsync(message);

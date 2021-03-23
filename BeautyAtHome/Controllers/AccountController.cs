@@ -191,6 +191,7 @@ namespace BeautyAtHome.Controllers
             Account account = _mapper.Map<Account>(accountCM);
             try
             {
+                account.IsBeautyArtist = false;
                 await _accountService.AddAsync(account);
                 await _accountService.Save();
             }
