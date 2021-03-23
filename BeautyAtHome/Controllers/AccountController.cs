@@ -252,14 +252,16 @@ namespace BeautyAtHome.Controllers
             var accountList = _accountService.GetAll(_ => _.Gallery.Images);
             Account account = accountList.FirstOrDefault(_ => _.Id == accountUM.Id);
 
+            if (accountUM.File != null)
+            {
+                Image imageUpdated = account.Gallery.Images.First();
+                imageUpdated.Description = "Hình " + accountUM.DisplayName;
+                imageUpdated.ImageUrl = await _uploadFileService.UploadFile("123456798", accountUM.File, "service", "service-detail");
+                imageUpdated.GalleryId = (int)account.GalleryId;
 
-            Image imageUpdated = account.Gallery.Images.First();
-            imageUpdated.Description = "Hình " + accountUM.DisplayName;
-            imageUpdated.ImageUrl = await _uploadFileService.UploadFile("123456798", accountUM.File, "service", "service-detail");
-            imageUpdated.GalleryId = (int) account.GalleryId;
-
-            _imageService.Update(imageUpdated);
-            await _imageService.Save();
+                _imageService.Update(imageUpdated);
+                await _imageService.Save();
+            }
 
             try
             {
