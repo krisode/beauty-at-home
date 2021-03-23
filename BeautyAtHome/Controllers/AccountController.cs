@@ -229,14 +229,14 @@ namespace BeautyAtHome.Controllers
             var accountList = _accountService.GetAll(_ => _.Gallery.Images);
             Account account = accountList.FirstOrDefault(_ => _.Id == accountUM.Id);
 
-            ImageUM imageUM = new ImageUM();
-            imageUM.Id = account.Gallery.Images.First().Id;
-            imageUM.Description = "Hình " + account.DisplayName;
-            imageUM.ImageUrl = await _uploadFileService.UploadFile("123456798", accountUM.File, "service", "service-detail");
-            imageUM.GalleryId = (int) account.GalleryId;
 
-            Image image = _mapper.Map<Image>(imageUM);
-            _imageService.Update(image);
+            Image imageUpdated = account.Gallery.Images.First();
+            imageUpdated.Description = "Hình " + accountUM.DisplayName;
+            imageUpdated.ImageUrl = await _uploadFileService.UploadFile("123456798", accountUM.File, "service", "service-detail");
+            imageUpdated.GalleryId = (int) account.GalleryId;
+
+            _imageService.Update(imageUpdated);
+            await _imageService.Save();
 
             try
             {
