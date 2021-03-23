@@ -1,4 +1,5 @@
 ﻿using Infrastructure.Contexts;
+using Microsoft.AspNetCore.Http;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -9,10 +10,11 @@ namespace BeautyAtHome.ViewModels
 {
     public class FeedBackCM
     {
-        public int RateScore { get; set; }
+        public double RateScore { get; set; }
         public int BookingDetailId { get; set; }
         public int GalleryId { get; set; }
         public string FeedbackContent { get; set; }
+        public IFormFile File { get; set; }
 
     }
     public class FeedBackVM 

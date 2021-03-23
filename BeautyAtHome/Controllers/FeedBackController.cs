@@ -1,5 +1,6 @@
 ﻿using ApplicationCore.Services;
 using AutoMapper;
+using BeautyAtHome.ExternalService;
 using BeautyAtHome.Utils;
 using BeautyAtHome.ViewModels;
 using Infrastructure.Contexts;
@@ -19,12 +20,18 @@ namespace BeautyAtHome.Controllers
         private readonly IFeedBackService _service;
         private readonly IMapper _mapper;
         private readonly IPagingSupport<FeedBack> _pagingSupport;
+        private readonly IGalleryService _galleryService;
+        private readonly IImageService _imageService;
+        private readonly IUploadFileService _uploadFileService;
 
-        public FeedBackController(IFeedBackService service, IMapper mapper, IPagingSupport<FeedBack> pagingSupport)
+        public FeedBackController(IFeedBackService service, IMapper mapper, IPagingSupport<FeedBack> pagingSupport, IGalleryService galleryService, IImageService imageService, IUploadFileService uploadFileService)
         {
             _service = service;
             _mapper = mapper;
             _pagingSupport = pagingSupport;
+            _galleryService = galleryService;
+            _imageService = imageService;
+            _uploadFileService = uploadFileService;
         }
 
         /// <summary>
@@ -98,31 +105,37 @@ namespace BeautyAtHome.Controllers
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<ActionResult<FeedBackCM>> CreateFeedback([FromBody] FeedBackCM serviceModel)
+        public async Task<ActionResult<FeedBackCM>> CreateFeedback([FromForm] FeedBackCM feedbackModel)
         {
             //TODO: Implements BookingDetail.GetById(int id) does not exist, return BadRequest()
             //TODO: Implements GaleryId.GetById(int id) does not exist, return BadRequest()
 
-            //DateTime crtDate = DateTime.Now;
-            //int feedBackId = 3;
-            //int galleryId = 1;
-            //int rateScope = 1; /// asking 
-            //string feedbackContent = "";
-            //int bookingDetailID = 1;
+            if (feedbackModel.File != null)
+            {
+                GalleryCM galleryCM = new GalleryCM();
+                galleryCM.Name = "Hình feedback cho dịch vụ trong đơn " + feedbackModel.BookingDetailId;
+                galleryCM.Description = "Hình feedback cho dịch vụ trong đơn " + feedbackModel.BookingDetailId;
 
+                Gallery gallery = _mapper.Map<Gallery>(galleryCM);
+                Gallery crtGallery = await _galleryService.AddAsync(gallery);
+                await _galleryService.Save();
+                
+                feedbackModel.GalleryId = crtGallery.Id;
 
-            FeedBack crtFeedback = _mapper.Map<FeedBack>(serviceModel);
+                ImageCM imageCM = new ImageCM();
+                imageCM.Description = "Hình feedback trong đơn " + feedbackModel.BookingDetailId;
+                imageCM.GalleryId = crtGallery.Id;
+                imageCM.ImageUrl = await _uploadFileService.UploadFile("123456798", feedbackModel.File, "service", "service-detail");
+
+                Image image = _mapper.Map<Image>(imageCM);
+                await _imageService.AddAsync(image);
+            }
+            
+            FeedBack crtFeedback = _mapper.Map<FeedBack>(feedbackModel);
 
             try
             {
-                //crtFeedback.Id = null;
-                //crtFeedback.Id = feedBackId;
-                //crtFeedback.RateScore = rateScope;
-                //crtFeedback.BookingDetailId = bookingDetailID;
-                //crtFeedback.GalleryId = galleryId;
-                //crtFeedback.FeedbackContent = feedbackContent;
                 crtFeedback.CreateDate = DateTime.Now;
-
 
                 await _service.AddAsync(crtFeedback);
                 await _service.Save();
