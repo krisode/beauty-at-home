@@ -60,7 +60,6 @@ namespace BeautyAtHome.ViewModels
         public int Id { get; set; }
         public string DisplayName { get; set; }
 
-        public GalleryPagingSM Gallery { get; set; }
     }
 
     public class AccountWithImageVM

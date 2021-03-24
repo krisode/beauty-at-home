@@ -19,17 +19,21 @@ namespace BeautyAtHome.Controllers
     {
 
         private readonly IBookingService _service;
+        private readonly IAccountService _accountService;
         private readonly IMapper _mapper;
         private readonly IPagingSupport<Booking> _pagingSupport;
         private readonly IPushNotificationService _pushNotificationService;
 
-        public BookingController(IBookingService service, IMapper mapper, IPagingSupport<Booking> pagingSupport, IPushNotificationService pushNotificationService)
+        public BookingController(IBookingService service, IAccountService accountService, IMapper mapper, IPagingSupport<Booking> pagingSupport, IPushNotificationService pushNotificationService)
         {
             _service = service;
+            _accountService = accountService;
             _mapper = mapper;
             _pagingSupport = pagingSupport;
             _pushNotificationService = pushNotificationService;
         }
+
+
 
 
 
@@ -119,9 +123,20 @@ namespace BeautyAtHome.Controllers
                 crtBooking.CreateDate = createDate;
                 crtBooking.UpdateDate = updateDate;
                 crtBooking.Status = "Mới";
+                var data = new Dictionary<String, String>();
                 await _service.AddAsync(crtBooking);
                 await _service.Save();
-
+                Account customerAccount = await _accountService.GetByIdAsync(crtBooking.CustomerAccountId);
+                data.Add("notiType", "booking_created");
+                data.Add("bookingId", crtBooking.Id.ToString());
+                _ = _pushNotificationService.SendMessage(
+                    "Bạn nhận được đơn hàng mới",
+                    "Khách hàng: " + customerAccount.DisplayName + "\n"  +
+                    "Địa chỉ: "+ crtBooking.EndAddress,
+                    "booking_created_id_" + crtBooking.BeautyArtistAccountId,
+                    data
+                    );
+                Console.WriteLine("abc");
             }
             catch (Exception)
             {
@@ -290,7 +305,7 @@ namespace BeautyAtHome.Controllers
                 await _service.Save();
                 data.Add("notiType", "booking_changed");
                 data.Add("bookingStatus", bookingUpdated.Status);
-                string msg = await _pushNotificationService.SendMessage(
+                _ = _pushNotificationService.SendMessage(
                     "Đơn hàng của bạn đang được xử lý",
                     "Đơn hàng của bạn từ " + bookingUpdated.BeautyArtistAccount.DisplayName,
                     "booking_changed_id_" + bookingUpdated.Id,

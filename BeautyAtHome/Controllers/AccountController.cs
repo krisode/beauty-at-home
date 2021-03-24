@@ -75,6 +75,15 @@ namespace BeautyAtHome.Controllers
                     returnAccount.RateScore = rating[0];
                     returnAccount.TotalFeedback = (int) rating[1];
                 }
+                foreach(ServiceVM srv in returnAccount.Services)
+                {
+                    if(srv.Status == "Hủy")
+                    {
+                        returnAccount.Services.Remove(srv);
+                    }
+                    
+                }
+                
                 return Ok(returnAccount);
             }
             else
