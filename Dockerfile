@@ -8,7 +8,7 @@ COPY ./ApplicationCore/ApplicationCore.csproj ./ApplicationCore/
 COPY ./Infrastructure/Infrastructure.csproj ./Infrastructure/
 COPY ./BeautyAtHome.sln .
 
-RUN dotnet restore
+RUN dotnet build
 
 
 COPY . ./
