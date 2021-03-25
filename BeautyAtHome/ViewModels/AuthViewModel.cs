@@ -8,6 +8,7 @@ namespace BeautyAtHome.ViewModels
         public string DisplayName { get; set; }
         public string Avatar { get; set; }
         public string LoginType { get; set; }
+        public string LoginType2 { get; set; }
     }
 
     public class AuthVM
