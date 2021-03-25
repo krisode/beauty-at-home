@@ -1,22 +1,29 @@
 FROM mcr.microsoft.com/dotnet/sdk:5.0-alpine AS build
-WORKDIR /src
 
-COPY ./*.sln ./
+WORKDIR /app
 
-COPY */*.csproj ./
-RUN for file in $(ls *.csproj); do mkdir -p ${file%.*} && mv $file ${file%.*}; done
+
+COPY ./BeautyAtHome/BeautyAtHome.csproj ./BeautyAtHome/
+COPY ./ApplicationCore/ApplicationCore.csproj ./ApplicationCore/
+COPY ./Infrastructure/Infrastructure.csproj ./Infrastructure/
+COPY ./BeautyAtHome.sln .
+
 RUN dotnet restore
 
-COPY . ./
-RUN dotnet build -c Release -o /app
 
-RUN dotnet publish -c Release -o /app
+COPY . ./
+
+WORKDIR /app
+
+
+RUN dotnet publish -c Release -o out
+
 
 FROM mcr.microsoft.com/dotnet/aspnet:5.0-alpine AS runtime
 
 WORKDIR /app
 
-COPY --from=build /app ./
+COPY --from=build /app/out ./
 
 EXPOSE 8080
 
