@@ -16,7 +16,7 @@ FROM mcr.microsoft.com/dotnet/aspnet:5.0-alpine AS runtime
 
 WORKDIR /app
 
-COPY --from=build /app/out ./
+COPY --from=build /app ./
 
 EXPOSE 8080
 
