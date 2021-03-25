@@ -66,6 +66,11 @@ namespace BeautyAtHome.Controllers
         [ProducesResponseType(StatusCodes.Status200OK)]
         public async Task<ActionResult> LoginAccount([FromBody] AuthCM authCM)
         {
+            if (string.IsNullOrEmpty(authCM.LoginType))
+            {
+                return BadRequest();
+            }
+
             var auth = FirebaseAdmin.Auth.FirebaseAuth.DefaultInstance;
             string email;
             try
@@ -83,21 +88,44 @@ namespace BeautyAtHome.Controllers
             {
                 //string email = "maiquynhanh@gmail.com";
                 Account accountCreated = _accountService.GetByEmail(email);
-                
+
                 if (accountCreated == null)
                 {
+                    Gallery gallery = null;
+                    if (authCM.Avatar != null)
+                    {
+                        gallery = new Gallery()
+                        {
+                            Name = authCM.LoginType + "_GALLERY",
+                            Description = "GALLERY OF " + authCM.LoginType
+                        };
+                        Image img = new Image()
+                        {
+                            Description = "IMAGES OF " + authCM.LoginType,
+                            ImageUrl = authCM.Avatar
+                        };
+                        gallery.Images = new List<Image>();
+                        gallery.Images.Add(img);
+                    }
+
                     accountCreated = new Account()
                     {
                         DisplayName = authCM.DisplayName,
                         Email = email,
                         Role = Constants.Role.ADMIN,
-                        Status = Constants.AccountStatus.ACTIVE
+                        Status = Constants.AccountStatus.ACTIVE,
+                        Gallery = gallery
                     };
                     await _accountService.AddAsync(accountCreated);
                     await _accountService.Save();
                 }
-                var uid = accountCreated.Id;
 
+                string role = accountCreated.Role;
+                if (role != authCM.LoginType)
+                {
+                    return BadRequest();
+                }
+                var uid = accountCreated.Id;
                 string accessToken = await _jwtTokenProvider.GenerateToken(accountCreated);
 
                 response = new AuthVM()
