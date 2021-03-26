@@ -17,6 +17,17 @@ namespace BeautyAtHome.ViewModels
         public string Email { get; set; }
     }
 
+    public class AccountFormDataCM
+    {
+        public string DisplayName { get; set; }
+        public string Phone { get; set; }
+        public string Email{ get; set; }
+        public string Address { get; set; }
+        public string ServiceTypes { get; set; }
+        public ICollection<IFormFile> ImagesAvatar { get; set; }
+        public ICollection<IFormFile> ImagesCertificates { get; set; }
+    }
+
     public class AccountSM
     {
         public string Email { get; set; }

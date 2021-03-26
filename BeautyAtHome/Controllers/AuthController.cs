@@ -59,6 +59,52 @@ namespace BeautyAtHome.Controllers
             return Ok("test");
         }
 
+        [HttpPost("register")]
+        [Produces("application/json")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public async Task<ActionResult> RegisterAccount([FromForm] AccountFormDataCM account)
+        {
+            Account accountCreated = _mapper.Map<Account>(account);
+            List<Image> listImgAvatar = new List<Image>();
+            List<Image> listImgCertificates = new List<Image>();
+            if (account.ImagesAvatar != null)
+            {
+                foreach (IFormFile file in account.ImagesAvatar)
+                {
+                    string avatar = await _uploadFileService.UploadFile("token", file, "customer", "avatar");
+                    Image image = new Image();
+                    image.ImageUrl = avatar;
+                    image.Description = "customer-avatar";
+                    listImgAvatar.Add(image);
+                }
+            }
+            if(account.ImagesCertificates != null)
+            {
+                foreach (IFormFile file in account.ImagesAvatar)
+                {
+                    string certificate = await _uploadFileService.UploadFile("token", file, "customer", "certificates");
+                    Image image = new Image();
+                    image.ImageUrl = certificate;
+                    image.Description = "customer-certificates";
+                    listImgAvatar.Add(image);
+                }
+            }
+            listImgAvatar.AddRange(listImgCertificates);
+            accountCreated.Gallery = new Gallery()
+            {
+                Images = listImgAvatar,
+                Description = accountCreated.DisplayName + "_Info",
+                Name = "Ảnh cá nhân"
+            };
+
+            accountCreated.Status = "ACTIVE";
+            accountCreated.Role = "WORKER";
+            
+            await _accountService.AddAsync(accountCreated);
+            await _accountService.Save();
+            
+            return Ok("Đăng ký tài khoản thành công");
+        }
 
 
         [HttpPost("login")]

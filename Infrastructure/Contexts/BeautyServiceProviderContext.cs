@@ -51,6 +51,8 @@ namespace Infrastructure.Contexts
                     .IsRequired()
                     .HasMaxLength(300);
 
+                entity.Property(e => e.ServiceTypes).HasMaxLength(250);
+
                 entity.Property(e => e.Email)
                     .HasMaxLength(255)
                     .IsUnicode(false);
