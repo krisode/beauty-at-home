@@ -73,7 +73,7 @@ namespace BeautyAtHome.ViewModels
     {
         public int Id { get; set; }
         public BookingForFeedbackVM Booking { get; set; }
-
         public int ServiceId { get; set; }
+        public string ServiceName { get; set; }
     }
 }

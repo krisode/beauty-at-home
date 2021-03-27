@@ -33,6 +33,7 @@ namespace BeautyAtHome.ViewModels
     {
         //public int Id { get; set; } // k search feedBack theo ID
         public int ServiceId { get; set; }
+        public int WorkerId { get; set; }
         public double RateScoreMin { get; set; }
         public double RateScoreMax { get; set; }
         public int BookingDetailId { get; set; }

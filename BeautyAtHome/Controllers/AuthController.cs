@@ -64,7 +64,18 @@ namespace BeautyAtHome.Controllers
         [ProducesResponseType(StatusCodes.Status200OK)]
         public async Task<ActionResult> RegisterAccount([FromForm] AccountFormDataCM account)
         {
-            Account accountCreated = _mapper.Map<Account>(account);
+            if (string.IsNullOrEmpty(account.Email))
+            {
+                return BadRequest();
+            }
+
+            Account accountCreated = _accountService.GetByEmail(account.Email);
+            if(accountCreated != null)
+            {
+                return BadRequest("Email exists");
+            }
+
+            accountCreated = _mapper.Map<Account>(account);
             List<Image> listImgAvatar = new List<Image>();
             List<Image> listImgCertificates = new List<Image>();
             if (account.ImagesAvatar != null)
@@ -97,8 +108,9 @@ namespace BeautyAtHome.Controllers
                 Name = "Ảnh cá nhân"
             };
 
-            accountCreated.Status = "ACTIVE";
+            accountCreated.Status = "NEW";
             accountCreated.Role = "WORKER";
+            accountCreated.IsBeautyArtist = true;
             
             await _accountService.AddAsync(accountCreated);
             await _accountService.Save();
@@ -160,11 +172,21 @@ namespace BeautyAtHome.Controllers
                         Email = email,
                         Role = Constants.Role.ADMIN,
                         Status = Constants.AccountStatus.ACTIVE,
-                        Gallery = gallery
+                        Gallery = gallery,
+                        IsBeautyArtist = true
                     };
                     await _accountService.AddAsync(accountCreated);
                     await _accountService.Save();
                 }
+                else
+                {
+                    if (!accountCreated.Status.Equals("ACTIVE"))
+                    {
+                        return BadRequest();
+                    }
+                }
+
+                
 
                 string role = accountCreated.Role;
                 if (role != authCM.LoginType)
@@ -178,11 +200,17 @@ namespace BeautyAtHome.Controllers
                 {
                     Uid = accountCreated.Id,
                     DisplayName = accountCreated.DisplayName,
+                    Email = accountCreated.Email,
+                    Phone = accountCreated.Phone,
                     Role = accountCreated.Role,
                     AccessToken = accessToken,
                     ExpiresIn = Constants.EXPIRES_IN_DAY,
                     Gallery = _mapper.Map<GalleryVM>(accountCreated.Gallery)
                 };
+                if (accountCreated.Role.Equals("ADMIN"))
+                {
+                    response.Addresses = accountCreated.Addresses;
+                }
             }
             catch (Exception e)
             {

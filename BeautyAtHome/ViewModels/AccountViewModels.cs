@@ -57,6 +57,7 @@ namespace BeautyAtHome.ViewModels
         public string Phone { get; set; }
         public string Role { get; set; }
         public string Status { get; set; }
+        public string ServiceTypes { get; set; }
         public bool IsBeautyArtist { get; set; }
         public double RateScore { get; set; }
         public int TotalFeedback { get; set; }
@@ -80,6 +81,21 @@ namespace BeautyAtHome.ViewModels
         public int Id { get; set; }
         public string DisplayName { get; set; }
         public GalleryPagingSM Gallery { get; set; }
+    }
+
+    public class AccountNewFirstVM
+    {
+        public int Id { get; set; }
+        public string Email { get; set; }
+        public string DisplayName { get; set; }
+        public string Phone { get; set; }
+        public string Status { get; set; }
+        public bool IsBeautyArtist { get; set; }
+        public double RateScore { get; set; }
+        public int TotalFeedback { get; set; }
+        public ICollection<AddressPagingSM> Addresses { get; set; }
+        public GalleryPagingSM Gallery { get; set; }
+
     }
 
 }

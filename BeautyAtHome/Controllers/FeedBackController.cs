@@ -268,6 +268,11 @@ namespace BeautyAtHome.Controllers
                 pageIndex = 1;
             }
 
+            if (model.WorkerId > 0)
+            {
+                feedBackList = feedBackList.Where(_ => _.BookingDetail.Booking.BeautyArtistAccountId == model.WorkerId);
+            }
+
             var pagedModel = _pagingSupport.From(feedBackList)
                 .GetRange(pageIndex, pageSize, s => s.Id)
                 .Paginate<FeedBackVM>();

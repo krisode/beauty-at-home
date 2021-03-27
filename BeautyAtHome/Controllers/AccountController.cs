@@ -80,10 +80,8 @@ namespace BeautyAtHome.Controllers
                     if(srv.Status == "Hủy")
                     {
                         returnAccount.Services.Remove(srv);
-                    }
-                    
+                    } 
                 }
-                
                 return Ok(returnAccount);
             }
             else
@@ -111,7 +109,7 @@ namespace BeautyAtHome.Controllers
         [Produces("application/json")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public ActionResult<IEnumerable<AccountVM>> GetAllAccount([FromQuery] AccountSM account, int pageSize, int pageIndex, bool withRateScore)
+        public ActionResult<IEnumerable<AccountVM>> GetAllAccount([FromQuery] AccountSM account, bool withRateScore, bool getNewFirst, int pageSize = 20, int pageIndex = 1)
         {
             try
             {
@@ -120,6 +118,19 @@ namespace BeautyAtHome.Controllers
                     s => s.Gallery.Images, 
                     _ => _.Addresses
                 );
+
+                if (getNewFirst)
+                {
+                    accountList = accountList.Where(_ => _.Role == "WORKER");
+                    if (!string.IsNullOrEmpty(account.DisplayName))
+                    {
+                        accountList = accountList.Where(_ => _.DisplayName.Contains(account.DisplayName));
+                    }
+                    var result = _pagingSupport.From(accountList)
+                   .GetRange(pageIndex, pageSize, s => s.Status)
+                   .Paginate<AccountNewFirstVM>();
+                    return Ok(result);
+                }
 
                 if (!string.IsNullOrEmpty(account.Email))
                 {
@@ -255,11 +266,19 @@ namespace BeautyAtHome.Controllers
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<ActionResult> PutAccount([FromForm] AccountUM accountUM)
+        public async Task<ActionResult> PutAccount([FromForm] AccountUM accountUM, [FromQuery] string accountStatus)
         {
             /*Account accountUpdated = await _accountService.GetByIdAsync(id);*/
             var accountList = _accountService.GetAll(_ => _.Gallery.Images);
             Account account = accountList.FirstOrDefault(_ => _.Id == accountUM.Id);
+
+            if(accountStatus != null && account != null)
+            {
+                account.Status = accountStatus;
+                _accountService.Update(account);
+                await _accountService.Save();
+                return Ok(account);
+            }
 
             if (accountUM.File != null)
             {
