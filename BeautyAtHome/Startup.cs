@@ -40,6 +40,7 @@ namespace BeautyAtHome
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddCors();
             services.AddAutoMapper(typeof(Startup));
 
             var pathToKey = Path.Combine(Directory.GetCurrentDirectory(), "Keys", "firebase_admin_sdk.json");
@@ -124,10 +125,7 @@ namespace BeautyAtHome
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
-            app.UseCors(
-                options => options.WithOrigins("http://localhost:3000").AllowAnyMethod().AllowAnyHeader()
-            );
-    
+            
             if (env.IsDevelopment() || env.IsProduction())
             {
                 app.UseDeveloperExceptionPage();
@@ -138,6 +136,12 @@ namespace BeautyAtHome
             app.UseHttpsRedirection();
 
             app.UseRouting();
+
+            app.UseCors(x => x
+                .AllowAnyMethod()
+                .AllowAnyHeader()
+                .SetIsOriginAllowed(origin => true) // allow any origin
+                .AllowCredentials());
 
             app.UseAuthentication();
 
