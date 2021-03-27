@@ -108,6 +108,15 @@ namespace BeautyAtHome.Controllers
                 Name = "Ảnh cá nhân"
             };
 
+            if(account.Address != null)
+            {
+                List<Address> listAddress = new List<Address>();
+                Address add = new Address();
+                add.Location = account.Address;
+                listAddress.Add(add);
+                accountCreated.Addresses = listAddress;
+            }
+
             accountCreated.Status = "NEW";
             accountCreated.Role = "WORKER";
             accountCreated.IsBeautyArtist = true;
